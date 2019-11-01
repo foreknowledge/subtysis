@@ -1,0 +1,2 @@
+include ':app', ':subtysis'
+rootProject.name='SubtysisApp'
