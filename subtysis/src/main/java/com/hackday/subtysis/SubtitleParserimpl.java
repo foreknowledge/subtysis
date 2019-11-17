@@ -13,7 +13,7 @@ public class SubtitleParserimpl implements SubtitleParser {
     @Override
     public ArrayList<Subtitle> createSubtitle(String filename) {
         BufferedReader bReader = null;
-        //글자 정보, smi파일의 기본정보 ,줄 띄움 정보, 자막 공백들을 제거하여 새로운 텍스트 파일을 만드는 작업입니다.
+        //글자 정보, smi 파일의 기본정보 ,줄 띄움 정보, 자막 공백들을 제거하여 새로운 텍스트 파일을 만드는 작업입니다.
         try {
 
             String s;
