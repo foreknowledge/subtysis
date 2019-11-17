@@ -67,7 +67,7 @@ public class SubtitleParserimpl implements SubtitleParser {
                 e.printStackTrace();
             }
         }
-        ArrayList<Subtitle>arrayList = new ArrayList<Subtitle>();//프레임 번호 정보와 자막타입, 자막내용들을 담은 클래스를 각각의 성분으로 가지는 ARRAYLIST입니다.
+        ArrayList<Subtitle>arrayList = new ArrayList<Subtitle>();//프레임 번호 정보와 자막타입, 자막내용들을 담은 클래스를 각각의 성분으로 가지는 ARRAYLIST 입니다.
         //걸러내는 작업을 거친 텍스트 파일을 바탕으로 프레임 정보, 자막의 언어 type, 자막 내용들을 파싱하는  부분입니다.
         try {
             String s;
