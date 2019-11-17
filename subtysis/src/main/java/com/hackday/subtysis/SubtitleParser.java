@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 class Subtitle {
     int frame=0;
-    String type="";
+    String langCode="";
     String sentence="";
 }
 
