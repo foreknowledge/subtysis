@@ -10,7 +10,6 @@ class Subtitle {
     String sentence="";
 }
 
-
 public interface SubtitleParser{
     public ArrayList<Subtitle> createSubtitle(String filename);
 }
