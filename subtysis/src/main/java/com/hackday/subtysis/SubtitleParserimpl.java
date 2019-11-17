@@ -98,7 +98,6 @@ public class SubtitleParserimpl implements SubtitleParser {
                     String cr = s.substring(st,endp);
                     int time=Integer.valueOf(cr).intValue();
                     arrayList.get(m).frame = time;
-
                 }
                 if(s.contains("P Class"))//P class 태그에서 자막의 type를 가져오는 작업입니다.
                 {
