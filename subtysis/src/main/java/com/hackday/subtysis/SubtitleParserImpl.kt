@@ -7,21 +7,20 @@ import com.hackday.subtysis.model.Subtitle
 
 open class SubtitleParserImpl : SubtitleParser {
 
-    override fun createSubtitle(filename: String):ArrayList<Subtitle> {
+    override fun createSubtitle(filename: String): ArrayList<Subtitle> {
         val bufferReader = File(filename)
         val lineList = mutableListOf<String>()
         val arrayList = ArrayList<Subtitle>()
-        var count:Int= 0
+        var count: Int = 0
         var m = -1
-        bufferReader.useLines { lines -> lines.forEach { lineList.add(it)} }
-        lineList.forEach{
-            var s:String=it
-            if(s.contains("<BODY>"))
-                count=1
+        bufferReader.useLines { lines -> lines.forEach { lineList.add(it) } }
+        lineList.forEach {
+            var s: String = it
+            if (s.contains("<BODY>"))
+                count = 1
             else if (s.contains("</BODY>"))
                 count = 0
-            if (!s.contains("&nbsp;") && count == 1)
-            {
+            if (!s.contains("&nbsp;") && count == 1) {
 
                 while (s.contains("ont"))
                 //글자 정보 태그는 삭제합니다.
@@ -34,20 +33,20 @@ open class SubtitleParserImpl : SubtitleParser {
                             break
                         }
                     }
-                    var cr = s.substring(s.indexOf("ont") - 2, ind +1)
-                    s=s.replace(cr, "")//font 태그 제거 작업
+                    var cr = s.substring(s.indexOf("ont") - 2, ind + 1)
+                    s = s.replace(cr, "")//font 태그 제거 작업
                 }
                 if (s.contains("<br>"))
                 //줄 띄움 태그 역시 삭제합니다.
                 {
-                    s=s.replace("<br>", "")
+                    s = s.replace("<br>", "")
                 }
 
                 if (s.contains("SYNC"))
                 //SYNC 태그에서 프레임 번호를 가져오는 작업입니다.
                 {
                     val temp = Subtitle()
-                    m=m+1
+                    m = m + 1
                     arrayList.add(temp)
 
                     var st = 0
@@ -83,13 +82,10 @@ open class SubtitleParserImpl : SubtitleParser {
                         }
                     }
                     val cr = s.substring(st, endp)
-                    if(cr=="KRCC")
-                    {
-                        arrayList[m].langCode=LangCode.KO
-                    }
-                    else
-                    {
-                        arrayList[m].langCode=LangCode.EN
+                    if (cr == "KRCC") {
+                        arrayList[m].langCode = LangCode.KO
+                    } else {
+                        arrayList[m].langCode = LangCode.EN
                     }
                     val er = s.substring(s.indexOf("<"), s.indexOf(">") + 1)
                     s = s.replace(er, "")
@@ -103,7 +99,7 @@ open class SubtitleParserImpl : SubtitleParser {
                 }
             }
         }
-        return(arrayList)
+        return (arrayList)
     }
 }
 
