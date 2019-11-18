@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class SubtitleParserimpl implements SubtitleParser{
-
     @Override
     public ArrayList<Subtitle> createSubtitle(String filename) {
         BufferedReader bReader = null;
