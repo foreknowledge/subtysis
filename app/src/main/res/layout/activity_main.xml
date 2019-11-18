@@ -11,15 +11,29 @@
             android:id="@+id/start_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@color/color_light_grey"
             android:text="Start"
             android:textColor="@color/color_black"
-            android:textSize="24sp"
+            android:textSize="30sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/download_video_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/color_light_grey"
+            android:text="Download Video (web)"
+            android:textColor="@color/color_black"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/start_button" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_container"
