@@ -4,6 +4,7 @@ package com.hackday.subtysis
 object main : SubtitleParserImpl() {
     @JvmStatic
     fun main(args: Array<String>) {
+        var name:String
         name="app\\src\\main\\assets\\치아문난난적소시광(우리의 따뜻했던 시절에게)_23회_NonDRM_[최소화질]_253891057.smi"
         for (i in createSubtitle(name).indices) {
             println(createSubtitle(name)[i].frame)
