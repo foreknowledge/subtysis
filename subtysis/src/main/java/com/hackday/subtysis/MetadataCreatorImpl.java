@@ -68,7 +68,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
         };
 
         request.setShouldCache(false);
-        RequestManager.requestQueue.add(request);
+        RequestManager.getInstance().add(request);
     }
 
 

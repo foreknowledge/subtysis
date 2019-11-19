@@ -6,7 +6,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 public class RequestManager {
-    static RequestQueue requestQueue;
+    private static RequestQueue requestQueue;
+
+    private RequestManager() {}
+    public static RequestQueue getInstance() { return requestQueue; }
 
     public static void createRequestQueue(Context context) {
         if (requestQueue == null) {
