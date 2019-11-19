@@ -80,8 +80,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
 
         for (Keyword keyword : mKeywords) {
             if (keyword.getWord().equals(word)) {
-                ResponseData data = keyword.getResponseData();
-                data = mResponseMap.get(word);
+                keyword.setResponseData(mResponseMap.get(word));
                 break;
             }
         }
