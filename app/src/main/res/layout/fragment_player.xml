@@ -40,12 +40,11 @@
       app:layout_behavior="@string/bottom_sheet_behavior"
       app:set_visibility="@{viewmodel.sheetVisibility}">
 
-      <TextView
-        android:id="@+id/test"
+      <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        app:bind_metadata="@{viewmodel.displayData}" />
+        app:bind_metadata="@{viewmodel.displayData}"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
   </androidx.coordinatorlayout.widget.CoordinatorLayout>
