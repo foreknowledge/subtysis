@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,14 +19,17 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
 import com.hackday.databinding.FragmentPlayerBinding
+import com.hackday.subtysis.SetResponseListener
+import com.hackday.subtysis.Subtysis
+import com.hackday.subtysis.model.SearchType
 import com.hackday.utils.Toaster
+import java.io.File
 
 
 /**
  * @author Created by lee.cm on 2019-11-12.
  */
 class PlayerFragment : Fragment() {
-
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: FragmentPlayerBinding
 
@@ -59,6 +63,8 @@ class PlayerFragment : Fragment() {
             inflater,
             com.hackday.R.layout.fragment_player, container, false
         )
+        binding.viewmodel = viewModel
+        binding.lifecycleOwner = this
         return binding.root
     }
 
@@ -74,6 +80,17 @@ class PlayerFragment : Fragment() {
         }
 
         selectMediaUri()
+        startSubtitleAnalyze()
+    }
+
+    private fun startSubtitleAnalyze() {
+        val subtysis = Subtysis()
+        subtysis.init(File(""), arrayListOf(SearchType.SHOPPING))
+        subtysis.setOnResponseListener(SetResponseListener { keywords ->
+            Log.d("keywords", keywords.joinToString(""))
+            viewModel.setDisplayData(keywords)
+        })
+        subtysis.analyze()
     }
 
     private fun subscribeViewModel() {

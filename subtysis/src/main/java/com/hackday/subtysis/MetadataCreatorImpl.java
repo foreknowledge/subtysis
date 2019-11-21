@@ -1,7 +1,6 @@
 package com.hackday.subtysis;
 
 import android.util.Log;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -10,19 +9,17 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hackday.subtysis.model.Keyword;
 import com.hackday.subtysis.model.SearchType;
-import com.hackday.subtysis.model.items.BlogItem;
-import com.hackday.subtysis.model.response.ResponseData;
 import com.hackday.subtysis.model.items.BaseItem;
+import com.hackday.subtysis.model.items.BlogItem;
 import com.hackday.subtysis.model.items.EncyclopediaItem;
 import com.hackday.subtysis.model.items.ShoppingItem;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.hackday.subtysis.model.response.ResponseData;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MetadataCreatorImpl implements MetadataCreator {
     private final String TAG = "MetadataCreatorImpl";
@@ -127,7 +124,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
                     return null;
                 }
 
-                ArrayList<BaseItem> baseItems = mGson.fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
+                ArrayList<BaseItem> baseItems = mGson
+                    .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
                 responseData.setItems(baseItems);
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException error message: " + e.getMessage());

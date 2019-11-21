@@ -1,6 +1,6 @@
 package com.hackday.subtysis.model
 
-enum class SearchType constructor( val url: String) {
+enum class SearchType constructor(val url: String) {
     BLOG("https://openapi.naver.com/v1/search/blog.json"),     // 블로그
     NEWS("https://openapi.naver.com/v1/search/news.json"),     // 뉴스
     BOOK("https://openapi.naver.com/v1/search/book.json"),      // 책
