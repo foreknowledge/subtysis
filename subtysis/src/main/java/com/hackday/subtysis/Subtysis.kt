@@ -3,6 +3,7 @@ package com.hackday.subtysis
 import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.LangCode
 import com.hackday.subtysis.model.SearchType
+import com.hackday.subtysis.model.Subtitle
 import java.io.File
 import java.util.ArrayList
 
@@ -14,20 +15,20 @@ class Subtysis {
     lateinit var mTypes: ArrayList<SearchType>
     lateinit var mListener: SetResponseListener
 
-    val contentExtractor: ContentExtractor = ContentExtractorImpl()
-
     fun init(file: File, types: ArrayList<SearchType>) {
         this.file = file
         this.mTypes = types;
     }
 
     fun analyze() {
-        val keywords = ArrayList<Keyword>()
-        keywords.add(Keyword(1234, "모자", LangCode.KO, null))
-        keywords.add(Keyword(1234, "아이폰11", LangCode.KO, null))
-        keywords.add(Keyword(1234, "삼성 갤럭시 A80", LangCode.KO, null))
+        val subtitleParser: SubtitleParser = SubtitleParserImpl()
+        val subtitles: ArrayList<Subtitle> = subtitleParser.createSubtitle(file.path)
 
-        val metadataCreator = MetadataCreatorImpl()
+        val contentExtractor: ContentExtractor = ContentExtractorImpl()
+        contentExtractor.initData(subtitles)
+        val keywords: ArrayList<Keyword> = contentExtractor.getAllKeywords()
+
+        val metadataCreator: MetadataCreator = MetadataCreatorImpl()
         metadataCreator.fillMetadata(keywords, mTypes, mListener)
     }
 
