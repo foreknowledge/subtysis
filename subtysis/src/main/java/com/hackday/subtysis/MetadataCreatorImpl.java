@@ -12,9 +12,9 @@ import com.hackday.subtysis.model.Keyword;
 import com.hackday.subtysis.model.SearchType;
 import com.hackday.subtysis.model.items.BlogItem;
 import com.hackday.subtysis.model.response.ResponseData;
-import com.mungziapp.testlib.model.items.BaseItem;
-import com.mungziapp.testlib.model.items.EncyclopediaItem;
-import com.mungziapp.testlib.model.items.ShoppingItem;
+import com.hackday.subtysis.model.items.BaseItem;
+import com.hackday.subtysis.model.items.EncyclopediaItem;
+import com.hackday.subtysis.model.items.ShoppingItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +31,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
     private ArrayList<SearchType> mTypes;
     private HashMap<String, HashMap<SearchType, ResponseData>> mResponsesMap = new HashMap<>();
     private SetResponseListener mListener;
+
+    private Gson mGson = new Gson();
 
     private int requestCnt = 0;
     private int responseCnt = 0;
@@ -49,36 +51,12 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
             else {
                 for (SearchType type: mTypes) {
-                    String url = getRequestURL(type) + "?query=" + word;
+                    String url = type.getUrl() + "?query=" + word;
                     sendRequest(url, word);
                     ++requestCnt;
                 }
             }
         }
-    }
-
-    private String getRequestURL(SearchType type) {
-        String url = "https://openapi.naver.com/v1/search";
-
-        switch (type) {
-            case BLOG: url += "/blog.json"; break;
-            case NEWS: url += "/news.json"; break;
-            case BOOK: url += "/book.json"; break;
-            case ADULT: url += "/adult.json"; break;
-            case ENCYCLOPEDIA: url += "/encyc.json"; break;
-            case MOVIE: url += "/movie.json"; break;
-            case CAFEARTICLE: url += "/cafearticle.json"; break;
-            case KIN: url += "/kin.json"; break;
-            case LOCAL: url += "/local.json"; break;
-            case ERRATA: url += "/errata.json"; break;
-            case WEB: url += "/webkr.json"; break;
-            case IMAGE: url += "/image.json"; break;
-            case SHOPPING: url += "/shop.json"; break;
-            case DOC: url += "/doc.json"; break;
-            default: Log.e(TAG, "type error!"); return null;
-        }
-
-        return url;
     }
 
     private void sendRequest(String url, final String word) {
@@ -94,7 +72,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Log", error.toString());
+                        mListener.onFailure(error.toString());
                     }
                 }
         ){
@@ -134,8 +112,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
         HashMap<SearchType, ResponseData> results = new HashMap<>();
 
         for (SearchType type: mTypes) {
-            Gson gson = new Gson();
-            ResponseData responseData = gson.fromJson(response, ResponseData.class);
+            ResponseData responseData = mGson.fromJson(response, ResponseData.class);
 
             try {
                 Type listType;
@@ -150,7 +127,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                     return null;
                 }
 
-                ArrayList<BaseItem> baseItems = gson.fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
+                ArrayList<BaseItem> baseItems = mGson.fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
                 responseData.setItems(baseItems);
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException error message: " + e.getMessage());
