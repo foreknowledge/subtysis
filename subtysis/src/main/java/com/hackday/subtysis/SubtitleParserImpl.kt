@@ -28,8 +28,6 @@ open class SubtitleParserImpl : SubtitleParser {
 
                     while(s.contains(","))
                         s = s.replace(",","")
-
-
                     var hour:String=s.substring(0,2)
                     var minute:String=s.substring(2,4)
                     var second:String=s.substring(4,6)
@@ -76,10 +74,7 @@ open class SubtitleParserImpl : SubtitleParser {
                             if (m >= 0) {
                                 arrayList[m].sentence = arrayList[m].sentence + s
                             }
-
                         }
-
-
                     }
                 }
             }
@@ -90,7 +85,6 @@ open class SubtitleParserImpl : SubtitleParser {
                 else if (s.contains("</BODY>"))
                     count = 0
                 if (!s.contains("&nbsp;") && count == 1) {
-
                     while (s.contains("ont"))
                     //글자 정보 태그는 삭제합니다.
                     {
@@ -113,14 +107,12 @@ open class SubtitleParserImpl : SubtitleParser {
                     if (s.contains("</font>")) {
                         s = s.replace("</font>", " ")
                     }
-
                     if (s.contains("SYNC"))
                     //SYNC 태그에서 프레임 번호를 가져오는 작업입니다.
                     {
                         val temp = Subtitle()
                         m = m + 1
                         arrayList.add(temp)
-
                         var st = 0
                         var endp = 0
                         //프레임번호를 찾는 과정입니다.
@@ -138,23 +130,10 @@ open class SubtitleParserImpl : SubtitleParser {
                         val er = s.substring(s.indexOf("<"), s.indexOf(">") + 1)
                         s = s.replace(er, "")
                     }
-
                     if (s.contains("P Class"))
                     //P class 태그에서 자막의 type를 가져오는 작업입니다.
                     {
-                        var st = 0
-                        var endp = 0
-                        //자막 언어 타입을 찾는 과정입니다.
-                        for (i in s.indexOf("P Class") until s.length) {
-                            if (s[i] == '=')
-                                st = i + 1
-                            else if (s[i] == '>') {
-                                endp = i
-                                break
-                            }
-                        }
-                        val cr = s.substring(st, endp)
-                        if (cr == "KRCC") {
+                        if (s.contains( "KRCC")) {
                             arrayList[m].langCode = LangCode.KO
                         } else {
                             arrayList[m].langCode = LangCode.EN
@@ -162,12 +141,10 @@ open class SubtitleParserImpl : SubtitleParser {
                         val er = s.substring(s.indexOf("<"), s.indexOf(">") + 1)
                         s = s.replace(er, "")
                     }
-
                     if (s !== "") {
                         if (m >= 0) {
                             arrayList[m].sentence = arrayList[m].sentence + s
                         }
-
                     }
                 }
             }
