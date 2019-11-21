@@ -72,7 +72,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Log", error.toString());
+                        mListener.onFailure(error.toString());
                     }
                 }
         ){
