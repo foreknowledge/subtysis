@@ -16,7 +16,7 @@ class Subtysis {
 
     fun init(file: File, types: ArrayList<SearchType>) {
         this.file = file
-        this.mTypes = types;
+        this.mTypes = types
     }
 
     fun analyze() {
