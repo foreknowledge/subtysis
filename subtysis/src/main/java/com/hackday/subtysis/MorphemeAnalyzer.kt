@@ -9,6 +9,7 @@ import kr.co.shineware.nlp.komoran.core.Komoran
 class MorphemeAnalyzer(
     private val analysisType: WordType = WordType.NN
 ) {
+    private val komoran = Komoran(DEFAULT_MODEL.LIGHT)
 
     fun analyzeSubtitle(subtitle: Subtitle): ArrayList<Keyword> {
         val tokenList = analyzeSentence(subtitle.sentence).iterator()
@@ -31,8 +32,7 @@ class MorphemeAnalyzer(
         return result
     }
 
-    private fun analyzeSentence(sentence: String) =
-        Komoran(DEFAULT_MODEL.FULL).analyze(sentence).tokenList
+    private fun analyzeSentence(sentence: String) = komoran.analyze(sentence).tokenList
 
     private fun getWordType(type: String) = when (type) {
         "NNG", "NNP", "NNB" -> WordType.NN
