@@ -11,14 +11,14 @@ import java.util.ArrayList
  */
 class Subtysis {
     lateinit var file: File
-    lateinit var mType: SearchType
+    lateinit var mTypes: ArrayList<SearchType>
     lateinit var mListener: SetResponseListener
 
     val contentExtractor: ContentExtractor = ContentExtractorImpl()
 
-    fun init(file: File, type: SearchType) {
+    fun init(file: File, types: ArrayList<SearchType>) {
         this.file = file
-        this.mType = type;
+        this.mTypes = types;
     }
 
     fun analyze() {
@@ -28,7 +28,7 @@ class Subtysis {
         keywords.add(Keyword(1234, "삼성 갤럭시 A80", LangCode.KO, null))
 
         val metadataCreator = MetadataCreatorImpl()
-        metadataCreator.fillMetadata(keywords, mType, mListener)
+        metadataCreator.fillMetadata(keywords, mTypes, mListener)
     }
 
     fun setOnResponseListener(listener: SetResponseListener): Subtysis {
