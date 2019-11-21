@@ -35,6 +35,10 @@ class PlayerViewModel : ViewModel() {
 
     fun setDisplayData(keywords: ArrayList<Keyword>) {
         _displayData.value = keywords
-        _sheetVisibility.value = true
+        setSheetVisibility(true)
+    }
+
+    fun setSheetVisibility(visibility: Boolean) {
+        _sheetVisibility.value = visibility
     }
 }

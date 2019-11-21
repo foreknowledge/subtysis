@@ -11,12 +11,12 @@ import java.util.*
  */
 class Subtysis {
     lateinit var file: File
-    lateinit var mTypes: ArrayList<SearchType>
-    lateinit var mListener: SetResponseListener
+    lateinit var searchType: ArrayList<SearchType>
+    lateinit var responseListener: SetResponseListener
 
     fun init(file: File, types: ArrayList<SearchType>) {
         this.file = file
-        this.mTypes = types
+        this.searchType = types
     }
 
     fun analyze() {
@@ -28,11 +28,11 @@ class Subtysis {
         val keywords: ArrayList<Keyword> = contentExtractor.getAllKeywords()
 
         val metadataCreator: MetadataCreator = MetadataCreatorImpl()
-        metadataCreator.fillMetadata(keywords, mTypes, mListener)
+        metadataCreator.fillMetadata(keywords, searchType, responseListener)
     }
 
     fun setOnResponseListener(listener: SetResponseListener): Subtysis {
-        mListener = listener
+        responseListener = listener
 
         return this
     }

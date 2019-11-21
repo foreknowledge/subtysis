@@ -95,7 +95,9 @@ class PlayerFragment : Fragment() {
 
     private fun startSubtitleAnalyze() {
         val subtysis = Subtysis()
-        subtysis.init(File(""), arrayListOf(SearchType.SHOPPING))
+        val path = "${context?.filesDir?.absolutePath}/${getString(R.string.file_name)}"
+
+        subtysis.init(File(path), arrayListOf(SearchType.SHOPPING))
         subtysis.setOnResponseListener(object : SetResponseListener {
             override fun onResponse(keywords: ArrayList<Keyword>?) {
                 keywords?.let {
