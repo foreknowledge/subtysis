@@ -29,6 +29,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
+      android:id="@+id/bottom_sheet"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="@drawable/back_bottom_sheet"
@@ -36,9 +37,11 @@
       android:padding="16dp"
       app:behavior_hideable="true"
       app:behavior_peekHeight="150dp"
-      app:layout_behavior="@string/bottom_sheet_behavior">
+      app:layout_behavior="@string/bottom_sheet_behavior"
+      app:set_visibility="@{viewmodel.sheetVisibility}">
 
       <TextView
+        android:id="@+id/test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
