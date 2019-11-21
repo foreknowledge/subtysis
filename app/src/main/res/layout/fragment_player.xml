@@ -44,7 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        app:bind_metadata="@{viewmodel.displayData}" />
+        app:bind_metadata="@{viewmodel.displayData}"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
   </androidx.coordinatorlayout.widget.CoordinatorLayout>
