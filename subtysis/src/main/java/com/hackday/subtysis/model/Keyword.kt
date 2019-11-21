@@ -6,5 +6,5 @@ data class Keyword(
     val frame: Int,
     val word: String,
     val langCode: LangCode,
-    var dataMap: HashMap<SearchType, ResponseData>? = null
+    var responses: HashMap<SearchType, ResponseData>? = null
 )

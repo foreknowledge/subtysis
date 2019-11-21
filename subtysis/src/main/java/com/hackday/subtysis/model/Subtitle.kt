@@ -1,7 +1,9 @@
 package com.hackday.subtysis.model
 
+
 data class Subtitle(
-    val frame: Int,
-    val sentence: String,
-    val langCode: LangCode
+    var frame: Int=0,
+    var sentence: String="",
+    var langCode: LangCode=LangCode.KO
 )
+

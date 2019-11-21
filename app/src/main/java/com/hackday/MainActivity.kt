@@ -1,11 +1,19 @@
 package com.hackday
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.hackday.databinding.ActivityMainBinding
+import com.hackday.player.PlayerFragment
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private val VIDEO_DOWNLOAD_LINK =
+            "https://drive.google.com/open?id=1ix5k-wI9k2flHgpgEf8Z-NYmtB5rRW-c"
+    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -19,6 +27,10 @@ class MainActivity : AppCompatActivity() {
         binding.startButton.setOnClickListener {
             showPlayer()
         }
+
+        binding.downloadVideoButton.setOnClickListener {
+            downloadVideo()
+        }
     }
 
     private fun showPlayer() {
@@ -27,6 +39,10 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .add(binding.fragmentContainer.id, playerFragment)
             .commit()
+    }
+
+    private fun downloadVideo() {
+        Intent(Intent.ACTION_VIEW, Uri.parse(VIDEO_DOWNLOAD_LINK)).also { startActivity(it) }
     }
 
     override fun onBackPressed() {
