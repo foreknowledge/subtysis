@@ -26,6 +26,7 @@
       android:layout_height="100dp"
       android:background="@android:color/darker_gray"
       android:scaleType="centerCrop"
+      app:bind_img="@{item.image}"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
