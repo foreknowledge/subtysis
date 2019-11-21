@@ -1,7 +1,7 @@
 package com.hackday.subtysis.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.hackday.subtysis.model.ShoppingItem
+import com.mungziapp.testlib.model.items.BaseItem
 
 data class ResponseData(
     @SerializedName("title")
@@ -19,5 +19,5 @@ data class ResponseData(
     @SerializedName("display")
     val display: Int,
     @SerializedName("items")
-    val items: ArrayList<ShoppingItem>
+    var items: ArrayList<out BaseItem>
 )
