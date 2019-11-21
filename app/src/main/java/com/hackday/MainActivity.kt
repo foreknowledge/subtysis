@@ -7,14 +7,24 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.hackday.databinding.ActivityMainBinding
 import com.hackday.player.PlayerFragment
+import com.hackday.subtysis.RequestManager
+import com.hackday.subtysis.SetResponseListener
+import com.hackday.subtysis.Subtysis
+import com.hackday.subtysis.model.Keyword
+import com.hackday.subtysis.model.SearchType
+import com.hackday.subtysis.model.items.BlogItem
 import com.hackday.utils.Toaster
+import com.mungziapp.testlib.model.items.EncyclopediaItem
+import com.mungziapp.testlib.model.items.ShoppingItem
 import java.io.File
 import java.io.FileOutputStream
+import java.util.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +47,67 @@ class MainActivity : AppCompatActivity() {
         checkPermission()
         init()
         loadAsset()
+
+        showLog()
+    }
+
+    private fun showLog() {
+        RequestManager.createRequestQueue(applicationContext)
+        val subtysis = Subtysis()
+
+        val types = ArrayList<SearchType>()
+        types.add(SearchType.SHOPPING)
+        types.add(SearchType.ENCYCLOPEDIA)
+        types.add(SearchType.BLOG)
+
+        subtysis.init(subtitleFile!!, types)
+        subtysis.setOnResponseListener(object : SetResponseListener {
+            override fun onResponse(keywords: ArrayList<Keyword>) {
+                setMyKeywords(keywords)
+            }
+
+            override fun onFailure(errorMsg: String) {
+                Log.d("Log", errorMsg)
+            }
+        }).analyze()
+    }
+
+    private fun setMyKeywords(keywords: ArrayList<Keyword>) {
+        for (keyword in keywords) {
+            Log.d("Log", "keyword ====== ${keyword.word}")
+            val results = keyword.responses
+
+            Log.d("Log", "===========SHOPPING DATA===========")
+
+            val shoppingData = results!![SearchType.SHOPPING]
+            for (baseItem in shoppingData!!.items) {
+                val shoppingItem = baseItem as ShoppingItem
+                Log.d(
+                    "Log",
+                    "title = [" + shoppingItem.title + "], mallName = [" + shoppingItem.mallName + "]"
+                )
+            }
+
+            Log.d("Log", "===========ENCYCLOPEDIA DATA===========")
+            val encyclopData = results[SearchType.ENCYCLOPEDIA]
+            for (baseItem in encyclopData!!.items) {
+                val encyclopediaItem = baseItem as EncyclopediaItem
+                Log.d(
+                    "Log",
+                    "title = [" + encyclopediaItem.title + "], description = [" + encyclopediaItem.description + "]"
+                )
+            }
+
+            Log.d("Log", "===========BLOG DATA===========")
+            val blogData = results[SearchType.BLOG]
+            for (baseItem in blogData!!.items) {
+                val blogItem = baseItem as BlogItem
+                Log.d(
+                    "Log",
+                    "title = [" + blogItem.title + "], description = [" + blogItem.bloggername + "]"
+                )
+            }
+        }
     }
 
     private fun init() {
