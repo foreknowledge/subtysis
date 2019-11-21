@@ -34,17 +34,17 @@
       android:layout_height="wrap_content"
       android:background="@drawable/back_bottom_sheet"
       android:orientation="vertical"
-      android:padding="16dp"
       app:behavior_hideable="true"
       app:behavior_peekHeight="150dp"
       app:layout_behavior="@string/bottom_sheet_behavior"
       app:set_visibility="@{viewmodel.sheetVisibility}">
 
       <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_metadata"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:bind_metadata="@{viewmodel.displayData}"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:padding="16dp"
+        app:bind_metadata="@{viewmodel.displayData}" />
 
     </LinearLayout>
   </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,11 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,12 +18,17 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
+import com.hackday.R
 import com.hackday.databinding.FragmentPlayerBinding
+import com.hackday.databinding.ItemShoppingBinding
+import com.hackday.player.adapter.MetadataRecyclerViewAdapter
 import com.hackday.subtysis.SetResponseListener
 import com.hackday.subtysis.Subtysis
+import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.SearchType
 import com.hackday.utils.Toaster
 import java.io.File
+import java.util.*
 
 
 /**
@@ -32,6 +37,10 @@ import java.io.File
 class PlayerFragment : Fragment() {
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: FragmentPlayerBinding
+    private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
+        R.layout.item_shopping,
+        BR.item
+    )
 
     private var player: SimpleExoPlayer? = null
 
@@ -61,7 +70,7 @@ class PlayerFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(
             inflater,
-            com.hackday.R.layout.fragment_player, container, false
+            R.layout.fragment_player, container, false
         )
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
@@ -81,14 +90,22 @@ class PlayerFragment : Fragment() {
 
         selectMediaUri()
         startSubtitleAnalyze()
+        binding.rvMetadata.adapter = shoppingAdapter
     }
 
     private fun startSubtitleAnalyze() {
         val subtysis = Subtysis()
         subtysis.init(File(""), arrayListOf(SearchType.SHOPPING))
-        subtysis.setOnResponseListener(SetResponseListener { keywords ->
-            Log.d("keywords", keywords.joinToString(""))
-            viewModel.setDisplayData(keywords)
+        subtysis.setOnResponseListener(object : SetResponseListener {
+            override fun onResponse(keywords: ArrayList<Keyword>?) {
+                keywords?.let {
+                    viewModel.setDisplayData(keywords)
+                }
+            }
+
+            override fun onFailure(errorMsg: String?) {
+                Toaster.showShort(errorMsg ?: "Subtitle analyze error")
+            }
         })
         subtysis.analyze()
     }
