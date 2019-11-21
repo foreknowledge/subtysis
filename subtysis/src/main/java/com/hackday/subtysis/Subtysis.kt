@@ -1,7 +1,6 @@
 package com.hackday.subtysis
 
 import com.hackday.subtysis.model.Keyword
-import com.hackday.subtysis.model.LangCode
 import com.hackday.subtysis.model.SearchType
 import com.hackday.subtysis.model.Subtitle
 import java.io.File

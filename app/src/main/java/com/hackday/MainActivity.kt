@@ -20,8 +20,8 @@ import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.SearchType
 import com.hackday.subtysis.model.items.BlogItem
 import com.hackday.utils.Toaster
-import com.mungziapp.testlib.model.items.EncyclopediaItem
-import com.mungziapp.testlib.model.items.ShoppingItem
+import com.hackday.subtysis.model.items.EncyclopediaItem
+import com.hackday.subtysis.model.items.ShoppingItem
 import java.io.File
 import java.io.FileOutputStream
 import java.util.ArrayList

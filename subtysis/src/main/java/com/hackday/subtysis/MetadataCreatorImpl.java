@@ -12,9 +12,9 @@ import com.hackday.subtysis.model.Keyword;
 import com.hackday.subtysis.model.SearchType;
 import com.hackday.subtysis.model.items.BlogItem;
 import com.hackday.subtysis.model.response.ResponseData;
-import com.mungziapp.testlib.model.items.BaseItem;
-import com.mungziapp.testlib.model.items.EncyclopediaItem;
-import com.mungziapp.testlib.model.items.ShoppingItem;
+import com.hackday.subtysis.model.items.BaseItem;
+import com.hackday.subtysis.model.items.EncyclopediaItem;
+import com.hackday.subtysis.model.items.ShoppingItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +51,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
             else {
                 for (SearchType type: mTypes) {
-                    String url = RequestManager.mainURL + type.getUrl() + "?query=" + word;
+                    String url = type.getUrl() + "?query=" + word;
                     sendRequest(url, word);
                     ++requestCnt;
                 }

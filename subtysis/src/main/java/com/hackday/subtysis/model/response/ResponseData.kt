@@ -1,7 +1,7 @@
 package com.hackday.subtysis.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.mungziapp.testlib.model.items.BaseItem
+import com.hackday.subtysis.model.items.BaseItem
 
 data class ResponseData(
     @SerializedName("title")
