@@ -6,6 +6,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 public class RequestManager {
+    public static final String mainURL = "https://openapi.naver.com/v1/search";
     private static RequestQueue requestQueue;
 
     private RequestManager() {}
