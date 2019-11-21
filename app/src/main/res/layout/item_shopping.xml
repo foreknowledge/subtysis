@@ -14,7 +14,11 @@
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp">
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="12dp"
+    app:open_url="@{item.link}">
 
     <ImageView
       android:id="@+id/iv_shopping"
@@ -42,7 +46,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_margin="8dp"
-      android:text="@{@string/price_format(StringUtilKt.insertComma(item.lprice))}"
+      android:text="@{@string/format_price(StringUtilKt.insertComma(item.lprice))}"
       android:textColor="@android:color/black"
       android:textSize="18sp"
       app:layout_constraintStart_toEndOf="@id/iv_shopping"

@@ -1,6 +1,9 @@
 package com.hackday.player.adapter
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -9,15 +12,18 @@ import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.SearchType
 import com.hackday.subtysis.model.items.ShoppingItem
 
+
 @SuppressWarnings("unchecked")
 @BindingAdapter("bind_metadata")
 fun bindMetadata(recyclerView: RecyclerView, keywords: ArrayList<Keyword>?) {
     val adapter =
         recyclerView.adapter as MetadataRecyclerViewAdapter<ItemShoppingBinding, ShoppingItem>
     val displayData = arrayListOf<ShoppingItem>()
+
+    // 임시 데이터
     for (data in 0..10) displayData.add(
         ShoppingItem(
-            "", 1000, 1000, "안녕", 10000, 10000
+            "", 1000, 1000, "안녕...", 10000, 10000
         )
     )
 
@@ -40,4 +46,12 @@ fun setVisibility(linearLayout: LinearLayout, visibility: Boolean) {
     val bottomSheetBehavior = BottomSheetBehavior.from(linearLayout)
     bottomSheetBehavior.state =
         if (visibility) BottomSheetBehavior.STATE_COLLAPSED else BottomSheetBehavior.STATE_HIDDEN
+}
+
+@BindingAdapter("open_url")
+fun openUrl(constraintLayout: ConstraintLayout, url: String) {
+    constraintLayout.setOnClickListener {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        constraintLayout.context.startActivity(intent)
+    }
 }
