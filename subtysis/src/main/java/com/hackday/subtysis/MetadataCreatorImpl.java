@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 public class MetadataCreatorImpl implements MetadataCreator {
     private final String TAG = "MetadataCreatorImpl";
+    private final int MAX_REQUEST_CNT = 10;
 
     private ArrayList<Keyword> mKeywords;
     private ArrayList<SearchType> mTypes;
@@ -48,9 +49,10 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
             else {
                 for (SearchType type: mTypes) {
-                    String url = type.getUrl() + "?query=" + word;
-                    sendRequest(url, word);
-                    ++requestCnt;
+                    if (requestCnt++ < MAX_REQUEST_CNT) {
+                        String url = type.getUrl() + "?query=" + word;
+                        sendRequest(url, word);
+                    }
                 }
             }
         }
