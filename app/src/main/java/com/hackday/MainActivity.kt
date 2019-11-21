@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.hackday.databinding.ActivityMainBinding
 import com.hackday.player.PlayerFragment
+import com.hackday.subtysis.RequestManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        RequestManager.createRequestQueue(this@MainActivity)
+
         binding.startButton.setOnClickListener {
             showPlayer()
         }
