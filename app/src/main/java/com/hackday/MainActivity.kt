@@ -52,13 +52,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLog() {
-        RequestManager.createRequestQueue(applicationContext)
         val subtysis = Subtysis()
 
         val types = ArrayList<SearchType>()
         types.add(SearchType.SHOPPING)
-        types.add(SearchType.ENCYCLOPEDIA)
-        types.add(SearchType.BLOG)
+//        types.add(SearchType.ENCYCLOPEDIA)
+//        types.add(SearchType.BLOG)
 
         subtysis.init(subtitleFile!!, types)
         subtysis.setOnResponseListener(object : SetResponseListener {
@@ -88,31 +87,29 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            Log.d("Log", "===========ENCYCLOPEDIA DATA===========")
-            val encyclopData = results[SearchType.ENCYCLOPEDIA]
-            for (baseItem in encyclopData!!.items) {
-                val encyclopediaItem = baseItem as EncyclopediaItem
-                Log.d(
-                    "Log",
-                    "title = [" + encyclopediaItem.title + "], description = [" + encyclopediaItem.description + "]"
-                )
-            }
-
-            Log.d("Log", "===========BLOG DATA===========")
-            val blogData = results[SearchType.BLOG]
-            for (baseItem in blogData!!.items) {
-                val blogItem = baseItem as BlogItem
-                Log.d(
-                    "Log",
-                    "title = [" + blogItem.title + "], description = [" + blogItem.bloggername + "]"
-                )
-            }
+//            Log.d("Log", "===========ENCYCLOPEDIA DATA===========")
+//            val encyclopData = results[SearchType.ENCYCLOPEDIA]
+//            for (baseItem in encyclopData!!.items) {
+//                val encyclopediaItem = baseItem as EncyclopediaItem
+//                Log.d(
+//                    "Log",
+//                    "title = [" + encyclopediaItem.title + "], description = [" + encyclopediaItem.description + "]"
+//                )
+//            }
+//
+//            Log.d("Log", "===========BLOG DATA===========")
+//            val blogData = results[SearchType.BLOG]
+//            for (baseItem in blogData!!.items) {
+//                val blogItem = baseItem as BlogItem
+//                Log.d(
+//                    "Log",
+//                    "title = [" + blogItem.title + "], description = [" + blogItem.bloggername + "]"
+//                )
+//            }
         }
     }
 
     private fun init() {
-        RequestManager.createRequestQueue(this@MainActivity)
-
         binding.startButton.setOnClickListener {
             showPlayer()
         }

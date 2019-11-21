@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <data>
+
+    <import type="com.hackday.utils.StringUtilKt" />
 
     <variable
       name="item"
@@ -10,7 +13,54 @@
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="12dp"
+    app:open_url="@{item.link}">
 
+    <ImageView
+      android:id="@+id/iv_shopping"
+      android:layout_width="100dp"
+      android:layout_height="100dp"
+      android:background="@android:color/darker_gray"
+      android:scaleType="centerCrop"
+      app:bind_img="@{item.image}"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+      android:id="@+id/tv_shopping_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="8dp"
+      android:text="@{item.title}"
+      android:textColor="@android:color/black"
+      android:textSize="20sp"
+      android:textStyle="bold"
+      app:layout_constraintStart_toEndOf="@id/iv_shopping"
+      app:layout_constraintTop_toTopOf="@id/iv_shopping" />
+
+    <TextView
+      android:id="@+id/tv_shopping_price"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="8dp"
+      android:text="@{@string/format_price(StringUtilKt.insertComma(item.lprice))}"
+      android:textColor="@android:color/black"
+      android:textSize="18sp"
+      app:layout_constraintStart_toEndOf="@id/iv_shopping"
+      app:layout_constraintTop_toBottomOf="@id/tv_shopping_title" />
+
+    <TextView
+      android:id="@+id/tv_shopping_mall"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="8dp"
+      android:text="@{item.mallName}"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toEndOf="@id/iv_shopping"
+      app:layout_constraintTop_toBottomOf="@id/tv_shopping_price" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

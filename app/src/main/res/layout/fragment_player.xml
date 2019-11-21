@@ -35,16 +35,26 @@
       android:background="@drawable/back_bottom_sheet"
       android:orientation="vertical"
       app:behavior_hideable="true"
-      app:behavior_peekHeight="150dp"
+      app:behavior_peekHeight="100dp"
       app:layout_behavior="@string/bottom_sheet_behavior"
       app:set_visibility="@{viewmodel.sheetVisibility}">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/title_metadata"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
 
       <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_metadata"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        app:bind_metadata="@{viewmodel.displayData}" />
+        android:padding="22dp"
+        app:bind_metadata="@{viewmodel.displayData}"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
   </androidx.coordinatorlayout.widget.CoordinatorLayout>
