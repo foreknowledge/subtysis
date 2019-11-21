@@ -24,7 +24,15 @@
       <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+          <TextView
+              android:id="@+id/subtitleview"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="#0C0000"
+              android:textColor="#FAFFFFFF" />
+      </com.google.android.exoplayer2.ui.PlayerView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

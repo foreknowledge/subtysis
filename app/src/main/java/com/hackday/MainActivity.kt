@@ -167,6 +167,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun showPlayer() {
         val playerFragment = PlayerFragment.newInstance()
+
+        val arguments = Bundle()
+        arguments.putString("subTitleFilePath", subtitleFile!!.path)
+
+        playerFragment.arguments = arguments
+
         supportFragmentManager
             .beginTransaction()
             .add(binding.fragmentContainer.id, playerFragment)
