@@ -6,14 +6,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.hackday.databinding.ItemShoppingBinding
 import com.hackday.subtysis.model.Keyword
+import com.hackday.subtysis.model.SearchType
+import com.hackday.subtysis.model.items.ShoppingItem
 
 @SuppressWarnings("unchecked")
 @BindingAdapter("bind_metadata")
 fun bindMetadata(recyclerView: RecyclerView, keywords: ArrayList<Keyword>?) {
     val adapter =
-        recyclerView.adapter as MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>
+        recyclerView.adapter as MetadataRecyclerViewAdapter<ItemShoppingBinding, ShoppingItem>
     keywords?.let {
-        adapter.setItems(keywords)
+        val displayData = arrayListOf<ShoppingItem>()
+        for (keyword in keywords) {
+            val shoppingData = keyword.responses!![SearchType.SHOPPING]?.items
+
+            shoppingData?.let {
+                for (data in shoppingData) displayData.add(data as ShoppingItem)
+            }
+        }
+
+        adapter.setItems(displayData)
         adapter.notifyDataSetChanged()
     }
 }
