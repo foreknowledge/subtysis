@@ -1,14 +1,18 @@
 package com.hackday.player
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
@@ -45,7 +49,9 @@ class PlayerFragment : Fragment() {
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var subtitleFilePath: String
+
     var count:Int=0
+    var remain:String=""
 
     private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
         R.layout.item_shopping,
@@ -67,12 +73,24 @@ class PlayerFragment : Fragment() {
                     if(player!!.currentPosition > getarray()[count].frame.toDouble())
                     {
                         subtitleview.setText(getarray()[count].sentence)
+                        remain=getarray()[count].sentence
+                        var str=getarray()[count].sentence.split(" ")
+                        var but=ArrayList<Button>()
+                        infotext.removeAllViews()
+                        for(i in str.indices)
+                        {
+                            var bat = Button(this@PlayerFragment.context)
+                            bat.setText(str[i])
+                            infotext.addView(bat)
+
+                        }
+
                         count=count+1
 
                     }
                     else
                     {
-                        subtitleview.setText(player!!.currentPosition.toString())
+                        subtitleview.setText(remain)
                     }
 
 
@@ -138,7 +156,18 @@ class PlayerFragment : Fragment() {
         if (viewModel.hasVideoSourceUri()) {
             return
         }
+        showlist.setOnClickListener{
+            if(infotext.visibility==View.VISIBLE)
+            {
+                infotext.visibility=View.INVISIBLE
+            }
 
+            else
+            {
+                infotext.visibility=View.VISIBLE
+            }
+            check.setText(R.id.showlist.toString())
+        }
         selectMediaUri()
         startSubtitleAnalyze()
         binding.rvMetadata.adapter = shoppingAdapter
