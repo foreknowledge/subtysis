@@ -89,7 +89,6 @@ class PlayerFragment : Fragment() {
                                 break
                             }
                         }
-
                     }
                 }
             }
