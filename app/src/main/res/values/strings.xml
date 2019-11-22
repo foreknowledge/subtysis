@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SubtysisApp</string>
+    <string name="file_name">치아문난난적소시광(우리의 따뜻했던 시절에게)_23회_NonDRM_[최소화질]_253891057.smi</string>
+    <string name="format_price">%s원</string>
+    <string name="title_metadata">연관 데이터</string>
 </resources>
