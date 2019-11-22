@@ -44,6 +44,7 @@ class PlayerFragment : Fragment() {
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var subtitleFilePath: String
 
+    private lateinit var arr: ArrayList<Subtitle>
     var count: Int = 0
     var remain: String = ""
 
@@ -53,35 +54,38 @@ class PlayerFragment : Fragment() {
     )
 
     private var player: SimpleExoPlayer? = null
-    fun getarray(): ArrayList<Subtitle> {
+
+    fun getarray() {
         var c = SubtitleParserImpl()
-        return c.createSubtitle(subtitleFilePath)
+        arr = c.createSubtitle(subtitleFilePath)
     }
 
     val mHandler: Handler = object : Handler() {
 
         override fun handleMessage(msg: Message) {
-            if (player != null) {
+            if (player != null && arr != null) {
                 if (msg.what == 0) {
+                    for (i in arr.indices) {
+                        if (arr[i].frame > player!!.currentPosition && i > 0) {
+                            var index: Int = i
 
-                    if (player!!.currentPosition > getarray()[count].frame.toDouble()) {
-                        subtitleview.setText(getarray()[count].sentence)
-                        remain = getarray()[count].sentence
-                        var str = getarray()[count].sentence.split(" ")
-                        var but = ArrayList<Button>()
-                        infotext.removeAllViews()
-                        for (i in str.indices) {
-                            var bat = Button(this@PlayerFragment.context)
-                            bat.setText(str[i])
-                            infotext.addView(bat)
+                            if (arr[index - 1].frame > (player!!.currentPosition - 1000)) {
+                                subtitleview.setText((arr[index - 1].sentence))
 
+                                var str = arr[index - 1].sentence.split(" ")
+                                infotext.removeAllViews()
+                                for (i in str.indices) {
+                                    var bat = Button(this@PlayerFragment.context)
+                                    bat.setText(str[i])
+                                    infotext.addView(bat)
+                                }
+                            } else {
+                                subtitleview.setText("");
+                            }
+                            break
                         }
-
-                        count = count + 1
-
-                    } else {
-                        subtitleview.setText(remain)
                     }
+
                 }
             }
         }
@@ -105,8 +109,6 @@ class PlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this)[PlayerViewModel::class.java]
-
-
         var c = NewThread(mHandler)
         c.start()
     }
@@ -131,10 +133,9 @@ class PlayerFragment : Fragment() {
         val arguments = arguments
         if (arguments != null) {
             val subTitleFilePath = arguments.getString("subTitleFilePath")
-
             this.subtitleFilePath = subTitleFilePath!!
         }
-
+        getarray()
         init()
         subscribeViewModel()
     }
