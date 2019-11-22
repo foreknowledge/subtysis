@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,8 +33,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
 
     private Gson mGson = new Gson();
 
-    private static AtomicInteger requestCnt = new AtomicInteger(0);
-    private static AtomicInteger responseCnt = new AtomicInteger(0);
+  private static AtomicInteger requestCnt = new AtomicInteger(0);
+  private static AtomicInteger responseCnt = new AtomicInteger(0);
 
     @Override
     public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, SetResponseListener listener) {
@@ -51,8 +50,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
             else {
                 for (SearchType type: mTypes) {
-                    if (requestCnt.get() < MAX_REQUEST_CNT) {
-                        requestCnt.incrementAndGet();
+                  if (requestCnt.get() < MAX_REQUEST_CNT) {
+                    requestCnt.incrementAndGet();
                         String url = type.getUrl() + "?query=" + word;
                         sendRequest(url, word);
                     }
@@ -103,9 +102,9 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
         }
 
-        responseCnt.incrementAndGet();
+      responseCnt.incrementAndGet();
 
-        if (requestCnt.get() == responseCnt.get()) {
+      if (requestCnt.get() == responseCnt.get()) {
             mListener.onResponse(mKeywords);
         }
     }

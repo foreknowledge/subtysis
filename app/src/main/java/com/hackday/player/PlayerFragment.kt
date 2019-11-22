@@ -9,7 +9,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
@@ -44,7 +43,6 @@ class PlayerFragment : Fragment() {
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var subtitleFilePath: String
     private lateinit var sonthread: NewThread
-    private lateinit var arr:ArrayList<Subtitle>
 
 
     private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
@@ -54,41 +52,48 @@ class PlayerFragment : Fragment() {
 
     private var player: SimpleExoPlayer? = null
 
-    fun getarray() {
-        var c = SubtitleParserImpl()
-        arr = c.createSubtitle(subtitleFilePath)
+    fun getarray(): ArrayList<Subtitle> {
+        val c = SubtitleParserImpl()
+        return c.createSubtitle(subtitleFilePath)
     }
 
     val mHandler: Handler = object : Handler() {
 
         override fun handleMessage(msg: Message) {
-            if (player != null && arr != null) {
-                if (msg.what == 0) {
-                    for (i in arr.indices) {
-                        if (arr[i].frame > player!!.currentPosition && i > 0) {
-                            var index: Int = i
+            val metadata = viewModel.displayData.value
+            val subtitles = getarray()
 
-                            if (arr[index - 1].frame > (player!!.currentPosition - 1000)) {
-                                subtitleview.setText((arr[index - 1].sentence))
+            if (player != null && subtitles != null) {
+                if (player != null) {
+                    if (msg.what == 0) {
+                        for (i in subtitles.indices) {
+                            if (subtitles[i].frame > player!!.currentPosition && i > 0) {
+                                var index: Int = i
 
-                                var str = arr[index - 1].sentence.split(" ")
-                                infotext.removeAllViews()
-                                for (i in str.indices) {
-                                    var bat = Button(this@PlayerFragment.context)
-                                    bat.setText(str[i])
-                                    infotext.addView(bat)
+                                if (subtitles[index - 1].frame > (player!!.currentPosition - 1000)) {
+                                    subtitleview.text = subtitles[index - 1].sentence
+
+                                    if (metadata != null) {
+                                        val filteredData = metadata?.filter {
+                                            subtitles[index - 1].sentence.contains(it.word)
+                                        } as ArrayList<Keyword>
+
+                                        if (filteredData.isNotEmpty()) {
+                                            viewModel.setDisplayData(filteredData)
+                                            viewModel.setSheetVisibility(true)
+                                        }
+                                    }
+                                } else {
+                                    subtitleview.text = ""
                                 }
-                            } else {
-                                subtitleview.setText("");
+                                break
                             }
-                            break
                         }
-                    }
 
+                    }
                 }
             }
         }
-
     }
 
     companion object {
@@ -158,9 +163,11 @@ class PlayerFragment : Fragment() {
     }
 
     private fun startSubtitleAnalyze() {
-        Subtysis(File(this.subtitleFilePath), arrayListOf(SearchType.SHOPPING)).analyze(object :
-            SetResponseListener {
-            override fun onResponse(keywords: java.util.ArrayList<Keyword>?) {
+        Subtysis(
+            File(this.subtitleFilePath),
+            arrayListOf(SearchType.SHOPPING)
+        ).analyze(object : SetResponseListener {
+            override fun onResponse(keywords: ArrayList<Keyword>?) {
                 keywords?.let {
                     viewModel.setDisplayData(keywords)
                 }
@@ -214,10 +221,8 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-
         player?.release()
         super.onDestroyView()
-        sonthread.interrupt()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultIntent: Intent?) {
@@ -228,20 +233,20 @@ class PlayerFragment : Fragment() {
     }
 }
 
-class NewThread(var data:Handler) : Thread(){
+class NewThread(var data: Handler) : Thread() {
 
-    override fun run(){
+    override fun run() {
 
-            while (true) {
-                try {
-                    sleep(1000)
-                    data.sendEmptyMessage(0)
-                }catch (e:InterruptedException) {
-                    break
-                }
-
+        while (true) {
+            try {
+                sleep(1000)
+                data.sendEmptyMessage(0)
+            } catch (e: InterruptedException) {
+                break
             }
+
         }
+    }
 
 }
 
