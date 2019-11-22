@@ -24,7 +24,44 @@
       <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <TextView
+          android:id="@+id/subtitleview"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="36dp"
+          android:layout_marginTop="500dp"
+          android:layout_marginEnd="36dp"
+          android:background="#0C0000"
+          android:gravity="center"
+          android:textColor="#FAFFFFFF"
+          android:textSize="18sp" />
+
+        <LinearLayout
+          android:id="@+id/infotext"
+          android:layout_width="197dp"
+          android:layout_height="500dp"
+          android:orientation="vertical"
+          android:visibility="gone"></LinearLayout>
+
+        <Button
+          android:id="@+id/showlist"
+          android:layout_width="68dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="340dp"
+          android:layout_marginEnd="36dp"
+          android:text="showlist" />
+
+        <TextView
+          android:id="@+id/check"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="200dp"
+          android:layout_marginEnd="36dp"
+          android:background="#111010"
+          android:textColor="#FFFFFF" />
+      </com.google.android.exoplayer2.ui.PlayerView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -52,7 +89,7 @@
         android:id="@+id/rv_metadata"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="22dp"
+        android:padding="8dp"
         app:bind_metadata="@{viewmodel.displayData}"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
