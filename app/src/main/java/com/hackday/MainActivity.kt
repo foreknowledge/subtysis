@@ -78,13 +78,15 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("Log", "===========SHOPPING DATA===========")
 
-            val shoppingData = results!![SearchType.SHOPPING]
-            for (baseItem in shoppingData!!.items) {
-                val shoppingItem = baseItem as ShoppingItem
-                Log.d(
-                    "Log",
-                    "title = [" + shoppingItem.title + "], mallName = [" + shoppingItem.mallName + "]"
-                )
+            if (results != null) {
+                val shoppingData = results[SearchType.SHOPPING]
+                for (baseItem in shoppingData!!.items) {
+                    val shoppingItem = baseItem as ShoppingItem
+                    Log.d(
+                        "Log",
+                        "title = [" + shoppingItem.title + "], mallName = [" + shoppingItem.mallName + "]"
+                    )
+                }
             }
 
 //            Log.d("Log", "===========ENCYCLOPEDIA DATA===========")
