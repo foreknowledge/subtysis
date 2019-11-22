@@ -43,8 +43,9 @@ class PlayerFragment : Fragment() {
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var subtitleFilePath: String
+    private lateinit var sonthread: NewThread
+    private lateinit var arr:ArrayList<Subtitle>
 
-    private lateinit var arr: ArrayList<Subtitle>
 
     private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
         R.layout.item_shopping,
@@ -79,8 +80,6 @@ class PlayerFragment : Fragment() {
                                 }
                             } else {
                                 subtitleview.setText("");
-
-
                             }
                             break
                         }
@@ -109,8 +108,8 @@ class PlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this)[PlayerViewModel::class.java]
-        var c = NewThread(mHandler)
-        c.start()
+        sonthread = NewThread(mHandler)
+        sonthread.start()
     }
 
     override fun onCreateView(
@@ -215,8 +214,10 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+
         player?.release()
         super.onDestroyView()
+        sonthread.interrupt()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultIntent: Intent?) {
@@ -227,14 +228,20 @@ class PlayerFragment : Fragment() {
     }
 }
 
-class NewThread(var data:Handler) : Thread( ) {
+class NewThread(var data:Handler) : Thread(){
 
-    override fun run() {
+    override fun run(){
 
-        while (true) {
-            sleep(1000)
-            data.sendEmptyMessage(0)
+            while (true) {
+                try {
+                    sleep(1000)
+                    data.sendEmptyMessage(0)
+                }catch (e:InterruptedException) {
+                    break
+                }
+
+            }
         }
-    }
+
 }
 
