@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -59,4 +60,10 @@ fun bindImg(imageView: ImageView, url: String) {
         .load(url)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(imageView)
+}
+
+@BindingAdapter("set_html_text")
+fun setHtmlText(textView: TextView, text: String) {
+    textView.text = text.replace("</b>", "")
+        .replace("<b>", "")
 }
