@@ -49,23 +49,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLog() {
-        val subtysis = Subtysis()
+        subtitleFile?.let {
+            val subtysis = Subtysis(it, arrayListOf(SearchType.SHOPPING))
+            subtysis.analyze(object : SetResponseListener {
+                override fun onResponse(keywords: ArrayList<Keyword>) {
+                    setMyKeywords(keywords)
+                }
 
-        val types = ArrayList<SearchType>()
-        types.add(SearchType.SHOPPING)
-//        types.add(SearchType.ENCYCLOPEDIA)
-//        types.add(SearchType.BLOG)
-
-        subtysis.init(subtitleFile!!, types)
-        subtysis.setOnResponseListener(object : SetResponseListener {
-            override fun onResponse(keywords: ArrayList<Keyword>) {
-                setMyKeywords(keywords)
-            }
-
-            override fun onFailure(errorMsg: String) {
-                Log.d("Log", errorMsg)
-            }
-        }).analyze()
+                override fun onFailure(errorMsg: String) {
+                    Log.d("Log", errorMsg)
+                }
+            })
+        }
     }
 
     private fun setMyKeywords(keywords: ArrayList<Keyword>) {
@@ -75,13 +70,15 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("Log", "===========SHOPPING DATA===========")
 
-            val shoppingData = results!![SearchType.SHOPPING]
-            for (baseItem in shoppingData!!.items) {
-                val shoppingItem = baseItem as ShoppingItem
-                Log.d(
-                    "Log",
-                    "title = [" + shoppingItem.title + "], mallName = [" + shoppingItem.mallName + "]"
-                )
+            if (results != null) {
+                val shoppingData = results[SearchType.SHOPPING]
+                for (baseItem in shoppingData!!.items) {
+                    val shoppingItem = baseItem as ShoppingItem
+                    Log.d(
+                        "Log",
+                        "title = [" + shoppingItem.title + "], mallName = [" + shoppingItem.mallName + "]"
+                    )
+                }
             }
 
 //            Log.d("Log", "===========ENCYCLOPEDIA DATA===========")

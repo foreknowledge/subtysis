@@ -56,7 +56,6 @@ class PlayerFragment : Fragment() {
     fun getarray(): ArrayList<Subtitle> {
         var c = SubtitleParserImpl()
         return c.createSubtitle(subtitleFilePath)
-
     }
 
     val mHandler: Handler = object : Handler() {
@@ -83,8 +82,6 @@ class PlayerFragment : Fragment() {
                     } else {
                         subtitleview.setText(remain)
                     }
-
-
                 }
             }
         }
@@ -160,13 +157,9 @@ class PlayerFragment : Fragment() {
     }
 
     private fun startSubtitleAnalyze() {
-        val subtysis = Subtysis()
-        subtysis.init(File(this.subtitleFilePath), arrayListOf(SearchType.SHOPPING))
-        val path = "${context?.filesDir?.absolutePath}/${getString(R.string.file_name)}"
-
-        subtysis.init(File(path), arrayListOf(SearchType.SHOPPING))
-        subtysis.setOnResponseListener(object : SetResponseListener {
-            override fun onResponse(keywords: ArrayList<Keyword>?) {
+        Subtysis(File(this.subtitleFilePath), arrayListOf(SearchType.SHOPPING)).analyze(object :
+            SetResponseListener {
+            override fun onResponse(keywords: java.util.ArrayList<Keyword>?) {
                 keywords?.let {
                     viewModel.setDisplayData(keywords)
                 }
@@ -175,8 +168,8 @@ class PlayerFragment : Fragment() {
             override fun onFailure(errorMsg: String?) {
                 Toaster.showShort(errorMsg ?: "Subtitle analyze error")
             }
+
         })
-        subtysis.analyze()
     }
 
     private fun subscribeViewModel() {
