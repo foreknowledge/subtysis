@@ -71,19 +71,21 @@ class PlayerFragment : Fragment() {
                                 var index: Int = i
 
                                 if (subtitles[index - 1].frame > (player!!.currentPosition - 1000)) {
-                                    subtitleview.text = subtitles[index - 1].sentence
+                                    if (subtitleview != null) {
+                                        subtitleview.text = subtitles[index - 1].sentence
 
-                                    if (metadata != null) {
-                                        val filteredData = metadata?.filter {
-                                            subtitles[index - 1].sentence.contains(it.word)
-                                                    && it.responses != null
-                                        } as ArrayList<Keyword>
+                                        if (metadata != null) {
+                                            val filteredData = metadata?.filter {
+                                                subtitles[index - 1].sentence.contains(it.word)
+                                                        && it.responses != null
+                                            } as ArrayList<Keyword>
 
-                                        if (filteredData.isNotEmpty()) {
-                                            viewModel.setDisplayData(filteredData)
-                                            viewModel.setSheetVisibility(true)
-                                        } else {
-                                            viewModel.setSheetVisibility(false)
+                                            if (filteredData.isNotEmpty()) {
+                                                viewModel.setDisplayData(filteredData)
+                                                viewModel.setSheetVisibility(true)
+                                            } else {
+                                                viewModel.setSheetVisibility(false)
+                                            }
                                         }
                                     }
                                 } else {
