@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         init()
         loadAsset()
 
-        showLog()
+//        showLog()
     }
 
     private fun showLog() {
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setMyKeywords(keywords: ArrayList<Keyword>) {
         for (keyword in keywords) {
-            Log.d("Log", "keyword ====== ${keyword.word}")
+            Log.d("Log", "keyword ====== ${keyword.word + keyword.responses.toString()}")
             val results = keyword.responses
 
             Log.d("Log", "===========SHOPPING DATA===========")
