@@ -9,7 +9,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
@@ -43,9 +42,8 @@ class PlayerFragment : Fragment() {
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var subtitleFilePath: String
+    private lateinit var sonthread: NewThread
 
-    var count: Int = 0
-    var remain: String = ""
 
     private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
         R.layout.item_shopping,
@@ -53,42 +51,49 @@ class PlayerFragment : Fragment() {
     )
 
     private var player: SimpleExoPlayer? = null
-    fun getarray(): ArrayList<Subtitle> {
-        var c = SubtitleParserImpl()
-        return c.createSubtitle(subtitleFilePath)
 
+    fun getarray(): ArrayList<Subtitle> {
+        val c = SubtitleParserImpl()
+        return c.createSubtitle(subtitleFilePath)
     }
 
     val mHandler: Handler = object : Handler() {
 
         override fun handleMessage(msg: Message) {
-            if (player != null) {
-                if (msg.what == 0) {
+            val metadata = viewModel.displayData.value
+            val subtitles = getarray()
 
-                    if (player!!.currentPosition > getarray()[count].frame.toDouble()) {
-                        subtitleview.setText(getarray()[count].sentence)
-                        remain = getarray()[count].sentence
-                        var str = getarray()[count].sentence.split(" ")
-                        var but = ArrayList<Button>()
-                        infotext.removeAllViews()
-                        for (i in str.indices) {
-                            var bat = Button(this@PlayerFragment.context)
-                            bat.setText(str[i])
-                            infotext.addView(bat)
+            if (player != null && subtitles != null) {
+                if (player != null) {
+                    if (msg.what == 0) {
+                        for (i in subtitles.indices) {
+                            if (subtitles[i].frame > player!!.currentPosition && i > 0) {
+                                var index: Int = i
 
+                                if (subtitles[index - 1].frame > (player!!.currentPosition - 1000)) {
+                                    subtitleview.text = subtitles[index - 1].sentence
+
+                                    if (metadata != null) {
+                                        val filteredData = metadata?.filter {
+                                            subtitles[index - 1].sentence.contains(it.word)
+                                        } as ArrayList<Keyword>
+
+                                        if (filteredData.isNotEmpty()) {
+                                            viewModel.setDisplayData(filteredData)
+                                            viewModel.setSheetVisibility(true)
+                                        }
+                                    }
+                                } else {
+                                    subtitleview.text = ""
+                                }
+                                break
+                            }
                         }
 
-                        count = count + 1
-
-                    } else {
-                        subtitleview.setText(remain)
                     }
-
-
                 }
             }
         }
-
     }
 
     companion object {
@@ -108,10 +113,8 @@ class PlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this)[PlayerViewModel::class.java]
-
-
-        var c = NewThread(mHandler)
-        c.start()
+        sonthread = NewThread(mHandler)
+        sonthread.start()
     }
 
     override fun onCreateView(
@@ -134,11 +137,11 @@ class PlayerFragment : Fragment() {
         val arguments = arguments
         if (arguments != null) {
             val subTitleFilePath = arguments.getString("subTitleFilePath")
-
             this.subtitleFilePath = subTitleFilePath!!
         }
-
+        getarray()
         init()
+
         subscribeViewModel()
     }
 
@@ -160,12 +163,10 @@ class PlayerFragment : Fragment() {
     }
 
     private fun startSubtitleAnalyze() {
-        val subtysis = Subtysis()
-        subtysis.init(File(this.subtitleFilePath), arrayListOf(SearchType.SHOPPING))
-        val path = "${context?.filesDir?.absolutePath}/${getString(R.string.file_name)}"
-
-        subtysis.init(File(path), arrayListOf(SearchType.SHOPPING))
-        subtysis.setOnResponseListener(object : SetResponseListener {
+        Subtysis(
+            File(this.subtitleFilePath),
+            arrayListOf(SearchType.SHOPPING)
+        ).analyze(object : SetResponseListener {
             override fun onResponse(keywords: ArrayList<Keyword>?) {
                 keywords?.let {
                     viewModel.setDisplayData(keywords)
@@ -175,8 +176,8 @@ class PlayerFragment : Fragment() {
             override fun onFailure(errorMsg: String?) {
                 Toaster.showShort(errorMsg ?: "Subtitle analyze error")
             }
+
         })
-        subtysis.analyze()
     }
 
     private fun subscribeViewModel() {
@@ -237,9 +238,15 @@ class NewThread(var data: Handler) : Thread() {
     override fun run() {
 
         while (true) {
-            sleep(1000)
-            data.sendEmptyMessage(0)
+            try {
+                sleep(1000)
+                data.sendEmptyMessage(0)
+            } catch (e: InterruptedException) {
+                break
+            }
+
         }
     }
+
 }
 

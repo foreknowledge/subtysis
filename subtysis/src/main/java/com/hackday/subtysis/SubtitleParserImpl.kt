@@ -36,10 +36,6 @@ open class SubtitleParserImpl : SubtitleParser {
                             second
                         )
                     arrayList[m].frame = time
-                    /*인터페이스에서 정의 했듯이 createSubtitle 함수는 subtitle 클래스를 성분으로 가지는 arraylist를 반환합니다. srt파일은
-                    영상 프레임 번호 정보를 제공하는 smi 파일과 달리 영상의 시간정보를 제공합니다. 따라서 srt파일을 파싱할 때는subtitle 클래스의 frame 성분에
-                    시간 정보를 넣었고 frame의 형식인 int형에 맞추기 위해 초 단위의 시간을 subtitle 클래스의 frame에 넣었습니다.
-                     */
                 }
                 if (s != "") {
                     if (s[0] !in '0'..'9') {
@@ -60,10 +56,7 @@ open class SubtitleParserImpl : SubtitleParser {
                             var cr = s.substring(s.indexOf("ont") - 2, ind + 1)
                             s = s.replace(cr, " ")//font 태그 제거 작업
                         }
-                        /*자막 언어 타입 정보를 가져오는 단계입니다. 현 작업의 단계에서는 한국어 자막인지
-                        영어자막인지 만을 구별하기에 자막내용에 한글이 포함되어 있다면 자막 타입을 KRCC로 정의
-                        하였습니다.
-                         */
+
                         if (s.matches(".[ㄱ-ㅎ ㅏ-ㅣ 가-힣]+.*".toRegex())) {
                             if (m >= 0)
                                 arrayList[m].langCode = LangCode.KO
@@ -86,7 +79,7 @@ open class SubtitleParserImpl : SubtitleParser {
                     count = 1
                 else if (s.contains("</BODY>"))
                     count = 0
-                if (!s.contains("&nbsp;") && count == 1) {
+                if (count == 1 && !s.contains("&nbsp")) {
                     while (s.contains("ont"))
                     //글자 정보 태그는 삭제합니다.
                     {
@@ -145,6 +138,7 @@ open class SubtitleParserImpl : SubtitleParser {
                         val er = s.substring(s.indexOf("<"), s.indexOf(">") + 1)
                         s = s.replace(er, "")
                     }
+
                     if (s !== "") {
                         if (m >= 0) {
                             arrayList[m].sentence = arrayList[m].sentence + s

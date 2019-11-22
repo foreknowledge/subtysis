@@ -31,9 +31,10 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginStart="36dp"
-          android:layout_marginTop="500dp"
+          android:layout_marginTop="450dp"
           android:layout_marginEnd="36dp"
           android:background="#0C0000"
+          android:bufferType="spannable"
           android:gravity="center"
           android:textColor="#FAFFFFFF"
           android:textSize="18sp" />
