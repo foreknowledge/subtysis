@@ -84,7 +84,7 @@ open class SubtitleParserImpl : SubtitleParser {
                     count = 1
                 else if (s.contains("</BODY>"))
                     count = 0
-                if (!s.contains("&nbsp;") && count == 1) {
+                if (count == 1 && !s.contains("&nbsp")) {
                     while (s.contains("ont"))
                     //글자 정보 태그는 삭제합니다.
                     {
@@ -141,6 +141,7 @@ open class SubtitleParserImpl : SubtitleParser {
                         val er = s.substring(s.indexOf("<"), s.indexOf(">") + 1)
                         s = s.replace(er, "")
                     }
+
                     if (s !== "") {
                         if (m >= 0) {
                             arrayList[m].sentence = arrayList[m].sentence + s
