@@ -105,9 +105,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
 
         responseCnt.incrementAndGet();
 
-        Log.d("Log", "requestCnt = " + requestCnt.get() + ", responseCnt = " + responseCnt.get());
         if (requestCnt.get() == responseCnt.get()) {
-            Log.d("Log", ".aljkdf;aljelifjlskdafaskldfjalkfakfjaljflk");
             mListener.onResponse(mKeywords);
         }
     }
