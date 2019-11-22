@@ -1,4 +1,4 @@
-package com.mungziapp.testlib.model.items
+package com.hackday.subtysis.model.items
 
 import com.google.gson.annotations.SerializedName
 

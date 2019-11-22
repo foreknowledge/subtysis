@@ -1,13 +1,20 @@
 package com.hackday.player
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.provider.MediaStore
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,19 +24,81 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
+import com.hackday.R
 import com.hackday.databinding.FragmentPlayerBinding
+import com.hackday.databinding.ItemShoppingBinding
+import com.hackday.player.adapter.MetadataRecyclerViewAdapter
+import com.hackday.subtysis.SetResponseListener
+import com.hackday.subtysis.SubtitleParserImpl
+import com.hackday.subtysis.Subtysis
+import com.hackday.subtysis.model.Keyword
+import com.hackday.subtysis.model.SearchType
+import com.hackday.subtysis.model.Subtitle
 import com.hackday.utils.Toaster
+import kotlinx.android.synthetic.main.fragment_player.*
+import java.io.File
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 
 /**
  * @author Created by lee.cm on 2019-11-12.
  */
 class PlayerFragment : Fragment() {
-
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: FragmentPlayerBinding
+    private lateinit var subtitleFilePath: String
+
+    var count:Int=0
+    var remain:String=""
+
+    private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
+        R.layout.item_shopping,
+        BR.item
+    )
 
     private var player: SimpleExoPlayer? = null
+    fun getarray():ArrayList<Subtitle>{
+        var c = SubtitleParserImpl()
+        return c.createSubtitle(subtitleFilePath)
+
+    }
+    val mHandler: Handler = object : Handler() {
+
+        override fun handleMessage(msg: Message) {
+            if (player != null) {
+                if (msg.what == 0) {
+
+                    if(player!!.currentPosition > getarray()[count].frame.toDouble())
+                    {
+                        subtitleview.setText(getarray()[count].sentence)
+                        remain=getarray()[count].sentence
+                        var str=getarray()[count].sentence.split(" ")
+                        var but=ArrayList<Button>()
+                        infotext.removeAllViews()
+                        for(i in str.indices)
+                        {
+                            var bat = Button(this@PlayerFragment.context)
+                            bat.setText(str[i])
+                            infotext.addView(bat)
+
+                        }
+
+                        count=count+1
+
+                    }
+                    else
+                    {
+                        subtitleview.setText(remain)
+                    }
+
+
+                }
+            }
+        }
+
+    }
 
     companion object {
         @JvmStatic
@@ -48,6 +117,11 @@ class PlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this)[PlayerViewModel::class.java]
+
+
+
+        var c = NewThread(mHandler)
+        c.start()
     }
 
     override fun onCreateView(
@@ -57,13 +131,23 @@ class PlayerFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(
             inflater,
-            com.hackday.R.layout.fragment_player, container, false
+            R.layout.fragment_player, container, false
         )
+        binding.viewmodel = viewModel
+        binding.lifecycleOwner = this
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val arguments = arguments
+        if (arguments != null) {
+            val subTitleFilePath = arguments.getString("subTitleFilePath")
+
+            this.subtitleFilePath = subTitleFilePath!!
+        }
+
         init()
         subscribeViewModel()
     }
@@ -72,8 +156,38 @@ class PlayerFragment : Fragment() {
         if (viewModel.hasVideoSourceUri()) {
             return
         }
+        showlist.setOnClickListener{
+            if(infotext.visibility==View.VISIBLE)
+            {
+                infotext.visibility=View.INVISIBLE
+            }
 
+            else
+            {
+                infotext.visibility=View.VISIBLE
+            }
+            check.setText(R.id.showlist.toString())
+        }
         selectMediaUri()
+        startSubtitleAnalyze()
+        binding.rvMetadata.adapter = shoppingAdapter
+    }
+
+    private fun startSubtitleAnalyze() {
+        val subtysis = Subtysis()
+        subtysis.init(File(this.subtitleFilePath), arrayListOf(SearchType.SHOPPING))
+        subtysis.setOnResponseListener(object : SetResponseListener {
+            override fun onResponse(keywords: ArrayList<Keyword>?) {
+                keywords?.let {
+                    viewModel.setDisplayData(keywords)
+                }
+            }
+
+            override fun onFailure(errorMsg: String?) {
+                Toaster.showShort(errorMsg ?: "Subtitle analyze error")
+            }
+        })
+        subtysis.analyze()
     }
 
     private fun subscribeViewModel() {
@@ -128,3 +242,14 @@ class PlayerFragment : Fragment() {
         }
     }
 }
+class NewThread(var data:Handler) : Thread( ) {
+
+    override fun run() {
+
+        while (true) {
+            sleep(1000)
+            data.sendEmptyMessage(0)
+        }
+    }
+}
+

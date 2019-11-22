@@ -1,7 +1,6 @@
 package com.hackday.subtysis.model.items
 
 import com.google.gson.annotations.SerializedName
-import com.mungziapp.testlib.model.items.BaseItem
 
 data class BlogItem (
     @SerializedName("description")
