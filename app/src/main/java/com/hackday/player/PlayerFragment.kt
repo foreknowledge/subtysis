@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,9 +42,8 @@ class PlayerFragment : Fragment() {
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var subtitleFilePath: String
+    private lateinit var sonthread: NewThread
 
-    var count: Int = 0
-    var remain: String = ""
 
     private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
         R.layout.item_shopping,
@@ -55,11 +53,12 @@ class PlayerFragment : Fragment() {
     private var player: SimpleExoPlayer? = null
 
     fun getarray(): ArrayList<Subtitle> {
-        var c = SubtitleParserImpl()
+        val c = SubtitleParserImpl()
         return c.createSubtitle(subtitleFilePath)
     }
 
     val mHandler: Handler = object : Handler() {
+
         override fun handleMessage(msg: Message) {
             val metadata = viewModel.displayData.value
             val subtitles = getarray()
@@ -79,14 +78,13 @@ class PlayerFragment : Fragment() {
                                             subtitles[index - 1].sentence.contains(it.word)
                                         } as ArrayList<Keyword>
 
-                                        Log.d("filter", filteredData.joinToString(","))
                                         if (filteredData.isNotEmpty()) {
                                             viewModel.setDisplayData(filteredData)
                                             viewModel.setSheetVisibility(true)
                                         }
                                     }
                                 } else {
-                                    subtitleview.text = "";
+                                    subtitleview.text = ""
                                 }
                                 break
                             }
@@ -115,9 +113,8 @@ class PlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this)[PlayerViewModel::class.java]
-
-        val c = NewThread(mHandler)
-        c.start()
+        sonthread = NewThread(mHandler)
+        sonthread.start()
     }
 
     override fun onCreateView(
@@ -142,8 +139,9 @@ class PlayerFragment : Fragment() {
             val subTitleFilePath = arguments.getString("subTitleFilePath")
             this.subtitleFilePath = subTitleFilePath!!
         }
-
+        getarray()
         init()
+
         subscribeViewModel()
     }
 
@@ -171,7 +169,6 @@ class PlayerFragment : Fragment() {
         ).analyze(object : SetResponseListener {
             override fun onResponse(keywords: ArrayList<Keyword>?) {
                 keywords?.let {
-                    Log.d("keywords", keywords.joinToString(","))
                     viewModel.setDisplayData(keywords)
                 }
             }
@@ -194,10 +191,9 @@ class PlayerFragment : Fragment() {
     }
 
     private fun selectMediaUri() {
-        val intent =
-            Intent(Intent.ACTION_PICK, MediaStore.Video.Media.INTERNAL_CONTENT_URI).also {
-                it.type = MIME_TYPE_VIDEO_ALL
-            }
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.INTERNAL_CONTENT_URI).also {
+            it.type = MIME_TYPE_VIDEO_ALL
+        }
 
         val packageManager = activity?.packageManager
         packageManager?.let {
@@ -242,8 +238,15 @@ class NewThread(var data: Handler) : Thread() {
     override fun run() {
 
         while (true) {
-            sleep(1000)
-            data.sendEmptyMessage(0)
+            try {
+                sleep(1000)
+                data.sendEmptyMessage(0)
+            } catch (e: InterruptedException) {
+                break
+            }
+
         }
     }
+
 }
+
