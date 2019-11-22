@@ -13,13 +13,10 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.hackday.databinding.ActivityMainBinding
 import com.hackday.player.PlayerFragment
-import com.hackday.subtysis.RequestManager
 import com.hackday.subtysis.SetResponseListener
 import com.hackday.subtysis.Subtysis
 import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.SearchType
-import com.hackday.subtysis.model.items.BlogItem
-import com.hackday.subtysis.model.items.EncyclopediaItem
 import com.hackday.subtysis.model.items.ShoppingItem
 import com.hackday.utils.Toaster
 import java.io.File
@@ -167,6 +164,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun showPlayer() {
         val playerFragment = PlayerFragment.newInstance()
+
+        val arguments = Bundle()
+        arguments.putString("subTitleFilePath", subtitleFile!!.path)
+
+        playerFragment.arguments = arguments
+
         supportFragmentManager
             .beginTransaction()
             .add(binding.fragmentContainer.id, playerFragment)
