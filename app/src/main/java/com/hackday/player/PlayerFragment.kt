@@ -60,33 +60,40 @@ class PlayerFragment : Fragment() {
     val mHandler: Handler = object : Handler() {
 
         override fun handleMessage(msg: Message) {
-            val metadata = viewModel.displayData.value
-            val subtitles = getarray()
 
-            if (player != null && subtitles != null) {
-                if (player != null) {
-                    if (msg.what == 0) {
-                        for (i in subtitles.indices) {
-                            if (subtitles[i].frame > player!!.currentPosition && i > 0) {
-                                var index: Int = i
-
-                                if (subtitles[index - 1].frame > (player!!.currentPosition - 1000)) {
-                                    subtitleview.text = subtitles[index - 1].sentence
-
-                                    if (metadata != null) {
-                                        val filteredData = metadata?.filter {
-                                            subtitles[index - 1].sentence.contains(it.word)
-                                        } as ArrayList<Keyword>
-
-                                        if (filteredData.isNotEmpty()) {
-                                            viewModel.setDisplayData(filteredData)
-                                            viewModel.setSheetVisibility(true)
-                                        }
+            if (player != null && arr != null) {
+                if (msg.what == 0) {
+                    for (i in arr.indices) {
+                        if (arr[i].frame > player!!.currentPosition && i > 0) {
+                            var index: Int = i
+                            if(index==1)
+                            {
+                                if(player!!.currentPosition>arr[index-1].frame)
+                                {
+                                    subtitleview.setText((arr[index - 1].sentence))
+                                    var str = arr[index - 1].sentence.split(" ")
+                                    infotext.removeAllViews()
+                                    for (i in str.indices) {
+                                        var bat = Button(this@PlayerFragment.context)
+                                        bat.setText(str[i])
+                                        infotext.addView(bat)
+                                    }
+                                }
+                            }
+                            else {
+                                if (arr[index - 1].frame > (player!!.currentPosition - 1000)) {
+                                    subtitleview.setText((arr[index - 1].sentence))
+                                    var str = arr[index - 1].sentence.split(" ")
+                                    infotext.removeAllViews()
+                                    for (i in str.indices) {
+                                        var bat = Button(this@PlayerFragment.context)
+                                        bat.setText(str[i])
+                                        infotext.addView(bat)
                                     }
                                 } else {
-                                    subtitleview.text = ""
+                                    subtitleview.setText("");
                                 }
-                                break
+
                             }
                         }
 
