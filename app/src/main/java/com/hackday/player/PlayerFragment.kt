@@ -44,9 +44,7 @@ class PlayerFragment : Fragment() {
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var subtitleFilePath: String
 
-    private lateinit var arr:ArrayList<Subtitle>
-    var count:Int=0
-    var remain:String=""
+    private lateinit var arr: ArrayList<Subtitle>
 
     private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
         R.layout.item_shopping,
@@ -55,36 +53,31 @@ class PlayerFragment : Fragment() {
 
     private var player: SimpleExoPlayer? = null
 
-    fun getarray(){
+    fun getarray() {
         var c = SubtitleParserImpl()
-        arr= c.createSubtitle(subtitleFilePath)
+        arr = c.createSubtitle(subtitleFilePath)
     }
 
     val mHandler: Handler = object : Handler() {
 
         override fun handleMessage(msg: Message) {
-            if (player != null && arr!=null) {
+            if (player != null && arr != null) {
                 if (msg.what == 0) {
-                    for(i in arr.indices)
-                    {
-                        if(arr[i].frame>player!!.currentPosition && i>0) {
+                    for (i in arr.indices) {
+                        if (arr[i].frame > player!!.currentPosition && i > 0) {
                             var index: Int = i
 
-                            if(arr[index-1].frame>(player!!.currentPosition-1000))
-                            {
-                                subtitleview.setText((arr[index-1].sentence))
+                            if (arr[index - 1].frame > (player!!.currentPosition - 1000)) {
+                                subtitleview.setText((arr[index - 1].sentence))
 
-                                var str=arr[index-1].sentence.split(" ")
+                                var str = arr[index - 1].sentence.split(" ")
                                 infotext.removeAllViews()
-                                for(i in str.indices)
-                                {
+                                for (i in str.indices) {
                                     var bat = Button(this@PlayerFragment.context)
                                     bat.setText(str[i])
                                     infotext.addView(bat)
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 subtitleview.setText("");
 
 
