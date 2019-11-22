@@ -13,13 +13,10 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.hackday.databinding.ActivityMainBinding
 import com.hackday.player.PlayerFragment
-import com.hackday.subtysis.RequestManager
 import com.hackday.subtysis.SetResponseListener
 import com.hackday.subtysis.Subtysis
 import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.SearchType
-import com.hackday.subtysis.model.items.BlogItem
-import com.hackday.subtysis.model.items.EncyclopediaItem
 import com.hackday.subtysis.model.items.ShoppingItem
 import com.hackday.utils.Toaster
 import java.io.File
@@ -52,23 +49,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLog() {
-        val subtysis = Subtysis()
+        subtitleFile?.let {
+            val subtysis = Subtysis(it, arrayListOf(SearchType.SHOPPING))
+            subtysis.analyze(object : SetResponseListener {
+                override fun onResponse(keywords: ArrayList<Keyword>) {
+                    setMyKeywords(keywords)
+                }
 
-        val types = ArrayList<SearchType>()
-        types.add(SearchType.SHOPPING)
-//        types.add(SearchType.ENCYCLOPEDIA)
-//        types.add(SearchType.BLOG)
-
-        subtysis.init(subtitleFile!!, types)
-        subtysis.setOnResponseListener(object : SetResponseListener {
-            override fun onResponse(keywords: ArrayList<Keyword>) {
-                setMyKeywords(keywords)
-            }
-
-            override fun onFailure(errorMsg: String) {
-                Log.d("Log", errorMsg)
-            }
-        }).analyze()
+                override fun onFailure(errorMsg: String) {
+                    Log.d("Log", errorMsg)
+                }
+            })
+        }
     }
 
     private fun setMyKeywords(keywords: ArrayList<Keyword>) {
