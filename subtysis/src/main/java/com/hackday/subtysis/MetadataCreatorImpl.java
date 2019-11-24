@@ -1,10 +1,8 @@
 package com.hackday.subtysis;
 
 import android.util.Log;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hackday.subtysis.model.Keyword;
@@ -14,10 +12,10 @@ import com.hackday.subtysis.model.items.BlogItem;
 import com.hackday.subtysis.model.items.EncyclopediaItem;
 import com.hackday.subtysis.model.items.ShoppingItem;
 import com.hackday.subtysis.model.response.ResponseData;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,30 +24,32 @@ public class MetadataCreatorImpl implements MetadataCreator {
     private final String TAG = "MetadataCreatorImpl";
     private final int MAX_REQUEST_CNT = 10;
 
-    private ArrayList<Keyword> mKeywords;
-    private ArrayList<SearchType> mTypes;
-    private HashMap<String, HashMap<SearchType, ResponseData>> mResponsesMap = new HashMap<>();
-    private SetResponseListener mListener;
+    private ArrayList<Keyword> keywords;
+    private ArrayList<SearchType> types;
+    private HashMap<String, HashMap<SearchType, ResponseData>> responsesMap = new HashMap<>();
+    private SetResponseListener listener;
 
-    private Gson mGson = new Gson();
+    private Gson gson = new Gson();
 
   private static AtomicInteger requestCnt = new AtomicInteger(0);
   private static AtomicInteger responseCnt = new AtomicInteger(0);
 
     @Override
     public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, SetResponseListener listener) {
-        mKeywords = keywords;
-        mTypes = types;
-        mListener = listener;
+        this.keywords = keywords;
+        this.types = types;
+        this.listener = listener;
 
-        for (Keyword keyword : mKeywords) {
+
+
+        for (Keyword keyword : this.keywords) {
             String word = keyword.getWord();
 
-            if (mResponsesMap.containsKey(word)) {
-                keyword.setResponses(mResponsesMap.get(word));
+            if (responsesMap.containsKey(word)) {
+                keyword.setResponses(responsesMap.get(word));
             }
             else {
-                for (SearchType type: mTypes) {
+                for (SearchType type: this.types) {
                   if (requestCnt.get() < MAX_REQUEST_CNT) {
                     requestCnt.incrementAndGet();
                         String url = type.getUrl() + "?query=" + word;
@@ -61,8 +61,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
     }
 
     private void sendRequest(String url, final String word) {
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
+        NaverRequest request = new NaverRequest(
                 url,
                 new Response.Listener<String>() {
                     @Override
@@ -73,18 +72,10 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mListener.onFailure(error.toString());
+                        listener.onFailure(error.toString());
                     }
                 }
-        ){
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("X-Naver-Client-ID", "cUAhSVDT7pqIUvvw6QEP");
-                headers.put("X-Naver-Client-Secret", "0e8_sZCH1w");
-                return headers;
-            }
-        };
+        );
 
         request.setShouldCache(false);
         RequestManager.getInstance().add(request);
@@ -93,11 +84,11 @@ public class MetadataCreatorImpl implements MetadataCreator {
 
     private void processResponse(String word, String response) {
         HashMap<SearchType, ResponseData> responses = getResponses(response);
-        mResponsesMap.put(word, responses);
+        responsesMap.put(word, responses);
 
-        for (Keyword keyword : mKeywords) {
+        for (Keyword keyword : keywords) {
             if (keyword.getWord().equals(word)) {
-                keyword.setResponses(mResponsesMap.get(word));
+                keyword.setResponses(responsesMap.get(word));
                 break;
             }
         }
@@ -105,15 +96,15 @@ public class MetadataCreatorImpl implements MetadataCreator {
       responseCnt.incrementAndGet();
 
       if (requestCnt.get() == responseCnt.get()) {
-            mListener.onResponse(mKeywords);
+            listener.onResponse(keywords);
         }
     }
 
     private HashMap<SearchType, ResponseData> getResponses(String response) {
         HashMap<SearchType, ResponseData> results = new HashMap<>();
 
-        for (SearchType type: mTypes) {
-            ResponseData responseData = mGson.fromJson(response, ResponseData.class);
+        for (SearchType type: types) {
+            ResponseData responseData = gson.fromJson(response, ResponseData.class);
 
             try {
                 Type listType;
@@ -128,7 +119,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                     return null;
                 }
 
-                ArrayList<BaseItem> baseItems = mGson
+                ArrayList<BaseItem> baseItems = gson
                     .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
                 responseData.setItems(baseItems);
             } catch (JSONException e) {

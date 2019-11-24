@@ -7,11 +7,17 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.hackday.databinding.ActivityMainBinding
 import com.hackday.player.PlayerFragment
+import com.hackday.subtysis.SetResponseListener
+import com.hackday.subtysis.Subtysis
+import com.hackday.subtysis.model.Keyword
+import com.hackday.subtysis.model.SearchType
+import com.hackday.subtysis.model.items.ShoppingItem
 import com.hackday.utils.Toaster
 import java.io.File
 import java.io.FileOutputStream
@@ -34,9 +40,39 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        checkPermission()
-        init()
-        loadAsset()
+//        checkPermission()
+//        init()
+//        loadAsset()
+
+        showLog()
+    }
+
+    private fun showLog() {
+        Subtysis(
+            File(""),
+            arrayListOf(SearchType.SHOPPING)
+        ).analyze(object : SetResponseListener {
+            override fun onResponse(keywords: ArrayList<Keyword>?) {
+                keywords?.let {
+                    for ((_, word, _, responses) in keywords) {
+                        Log.d("Log", "keyword = $word")
+                        val data = responses!![SearchType.SHOPPING]
+                        for (baseItem in data!!.items) {
+                            val item = baseItem as ShoppingItem
+                            Log.d(
+                                "Log",
+                                "title = [" + item.title + "], mallName = [" + item.mallName + "]"
+                            )
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(errorMsg: String?) {
+                Toaster.showShort(errorMsg ?: "Subtitle analyze error")
+            }
+
+        })
     }
 
     private fun init() {
