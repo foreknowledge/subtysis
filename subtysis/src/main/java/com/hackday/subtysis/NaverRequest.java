@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NaverRequest extends StringRequest {
+    public static final String MAIN_URL = "https://openapi.naver.com/v1/search";
 
     public NaverRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(url, listener, errorListener);

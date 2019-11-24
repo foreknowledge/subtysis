@@ -40,8 +40,6 @@ public class MetadataCreatorImpl implements MetadataCreator {
         this.types = types;
         this.listener = listener;
 
-
-
         for (Keyword keyword : this.keywords) {
             String word = keyword.getWord();
 
@@ -52,7 +50,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 for (SearchType type: this.types) {
                   if (requestCnt.get() < MAX_REQUEST_CNT) {
                     requestCnt.incrementAndGet();
-                        String url = type.getUrl() + "?query=" + word;
+                        String url = NaverRequest.MAIN_URL + type.getUrl() + "?query=" + word;
                         sendRequest(url, word);
                     }
                 }
