@@ -6,7 +6,7 @@ data class BlogItem (
     @SerializedName("description")
     val description: String,
     @SerializedName("bloggername")
-    val bloggername: String,
+    val bloggerName: String,
     @SerializedName("bloggerlink")
-    val bloggerlink: String
+    val bloggerLink: String
 ) : BaseItem()
