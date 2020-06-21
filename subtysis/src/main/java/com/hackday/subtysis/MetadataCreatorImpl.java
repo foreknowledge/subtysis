@@ -21,8 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MetadataCreatorImpl implements MetadataCreator {
-    private final String TAG = "MetadataCreatorImpl";
-    private final int MAX_REQUEST_CNT = 10;
+    private final static String TAG = "MetadataCreatorImpl";
+    private final static int MAX_REQUEST_CNT = 10;
 
     private ArrayList<Keyword> keywords;
     private ArrayList<SearchType> types;
@@ -31,8 +31,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
 
     private Gson gson = new Gson();
 
-  private static AtomicInteger requestCnt = new AtomicInteger(0);
-  private static AtomicInteger responseCnt = new AtomicInteger(0);
+    private static AtomicInteger requestCnt = new AtomicInteger(0);
+    private static AtomicInteger responseCnt = new AtomicInteger(0);
 
     @Override
     public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, SetResponseListener listener) {
@@ -48,8 +48,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
             else {
                 for (SearchType type: this.types) {
-                  if (requestCnt.get() < MAX_REQUEST_CNT) {
-                    requestCnt.incrementAndGet();
+                    if (requestCnt.get() < MAX_REQUEST_CNT) {
+                        requestCnt.incrementAndGet();
                         String url = NaverRequest.MAIN_URL + type.getUrl() + "?query=" + word;
                         sendRequest(url, word);
                     }
@@ -91,9 +91,9 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
         }
 
-      responseCnt.incrementAndGet();
+        responseCnt.incrementAndGet();
 
-      if (requestCnt.get() == responseCnt.get()) {
+        if (requestCnt.get() == responseCnt.get()) {
             listener.onResponse(keywords);
         }
     }
@@ -118,7 +118,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 }
 
                 ArrayList<BaseItem> baseItems = gson
-                    .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
+                        .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
                 responseData.setItems(baseItems);
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException error message: " + e.getMessage());
