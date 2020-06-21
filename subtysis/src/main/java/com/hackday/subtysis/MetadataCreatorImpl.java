@@ -27,7 +27,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
     private ArrayList<Keyword> keywords;
     private ArrayList<SearchType> types;
     private HashMap<String, HashMap<SearchType, ResponseData>> responsesMap = new HashMap<>();
-    private SetResponseListener listener;
+    private ResponseListener listener;
 
     private Gson gson = new Gson();
 
@@ -35,7 +35,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
     private static AtomicInteger responseCnt = new AtomicInteger(0);
 
     @Override
-    public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, SetResponseListener listener) {
+    public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, ResponseListener listener) {
         this.keywords = keywords;
         this.types = types;
         this.listener = listener;

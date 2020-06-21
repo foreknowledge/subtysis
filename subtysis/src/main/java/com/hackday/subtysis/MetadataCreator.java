@@ -6,5 +6,5 @@ import com.hackday.subtysis.model.SearchType;
 import java.util.ArrayList;
 
 public interface MetadataCreator {
-    void fillMetadata(ArrayList<Keyword> keywordKts, ArrayList<SearchType> types, SetResponseListener listener);
+    void fillMetadata(ArrayList<Keyword> keywordKts, ArrayList<SearchType> types, ResponseListener listener);
 }

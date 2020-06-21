@@ -24,7 +24,7 @@ import com.hackday.R
 import com.hackday.databinding.FragmentPlayerBinding
 import com.hackday.databinding.ItemShoppingBinding
 import com.hackday.player.adapter.MetadataRecyclerViewAdapter
-import com.hackday.subtysis.SetResponseListener
+import com.hackday.subtysis.ResponseListener
 import com.hackday.subtysis.SubtitleParserImpl
 import com.hackday.subtysis.Subtysis
 import com.hackday.subtysis.model.Keyword
@@ -170,7 +170,7 @@ class PlayerFragment : Fragment() {
         Subtysis(
             File(this.subtitleFilePath),
             arrayListOf(SearchType.SHOPPING)
-        ).analyze(object : SetResponseListener {
+        ).analyze(object : ResponseListener {
             override fun onResponse(keywords: ArrayList<Keyword>?) {
                 keywords?.let {
                     viewModel.setDisplayData(keywords)
