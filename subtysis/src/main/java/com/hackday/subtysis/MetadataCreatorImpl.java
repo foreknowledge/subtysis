@@ -22,17 +22,13 @@ import org.json.JSONObject;
 
 public class MetadataCreatorImpl implements MetadataCreator {
     private final static String TAG = "MetadataCreatorImpl";
-    private final static int MAX_REQUEST_CNT = 10;
 
     private ArrayList<Keyword> keywords;
     private ArrayList<SearchType> types;
-    private HashMap<String, HashMap<SearchType, ResponseData>> responsesMap = new HashMap<>();
+    private HashMap<String, HashMap<SearchType, ResponseData>> metadataMap = new HashMap<>();
     private ResponseListener listener;
 
     private Gson gson = new Gson();
-
-    private static AtomicInteger requestCnt = new AtomicInteger(0);
-    private static AtomicInteger responseCnt = new AtomicInteger(0);
 
     @Override
     public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, ResponseListener listener) {
@@ -43,13 +39,13 @@ public class MetadataCreatorImpl implements MetadataCreator {
         for (Keyword keyword : this.keywords) {
             String word = keyword.getWord();
 
-            if (responsesMap.containsKey(word)) {
-                keyword.setMetadata(responsesMap.get(word));
+            if (metadataMap.containsKey(word)) {
+                keyword.setMetadata(metadataMap.get(word));
             }
             else {
                 for (SearchType type: this.types) {
-                    if (requestCnt.get() < MAX_REQUEST_CNT) {
-                        requestCnt.incrementAndGet();
+                    if (RequestState.isRequestable()) {
+                        RequestState.requestState();
                         String url = NaverRequest.MAIN_URL + type.getUrl() + "?query=" + word;
                         sendRequest(url, word);
                     }
@@ -64,7 +60,9 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        processResponse(word, response);
+                        RequestState.responseState();
+                        fillMetadata(word, response);
+                        callListenerIfFinished();
                     }
                 },
                 new Response.ErrorListener() {
@@ -80,25 +78,25 @@ public class MetadataCreatorImpl implements MetadataCreator {
     }
 
 
-    private void processResponse(String word, String response) {
-        HashMap<SearchType, ResponseData> responses = getResponses(response);
-        responsesMap.put(word, responses);
+    private void fillMetadata(String word, String response) {
+        HashMap<SearchType, ResponseData> metadata = getMetadata(response);
+        metadataMap.put(word, metadata);
 
         for (Keyword keyword : keywords) {
             if (keyword.getWord().equals(word)) {
-                keyword.setMetadata(responsesMap.get(word));
+                keyword.setMetadata(metadataMap.get(word));
                 break;
             }
         }
+    }
 
-        responseCnt.incrementAndGet();
-
-        if (requestCnt.get() == responseCnt.get()) {
+    private void callListenerIfFinished() {
+        if (RequestState.isFinished()) {
             listener.onResponse(keywords);
         }
     }
 
-    private HashMap<SearchType, ResponseData> getResponses(String response) {
+    private HashMap<SearchType, ResponseData> getMetadata(String response) {
         HashMap<SearchType, ResponseData> results = new HashMap<>();
 
         for (SearchType type: types) {
@@ -128,5 +126,28 @@ public class MetadataCreatorImpl implements MetadataCreator {
         }
 
         return results;
+    }
+    
+    static class RequestState {
+        private final static int MAX_REQUEST_CNT = 10;
+
+        private static AtomicInteger requestCnt = new AtomicInteger(0);
+        private static AtomicInteger responseCnt = new AtomicInteger(0);
+
+        static boolean isRequestable() {
+            return requestCnt.get() < MAX_REQUEST_CNT;
+        }
+
+        static void requestState() {
+            requestCnt.incrementAndGet();
+        }
+
+        static void responseState() {
+            responseCnt.incrementAndGet();
+        }
+
+        static boolean isFinished() {
+            return requestCnt.get() == responseCnt.get();
+        }
     }
 }
