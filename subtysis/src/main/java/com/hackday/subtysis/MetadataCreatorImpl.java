@@ -15,6 +15,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
     private List<SearchType> types;
     private HashMap<String, HashMap<SearchType, ResponseData>> metadataCache = new HashMap<>();
     private ResponseListener listener;
+    private RequestState requestState = new RequestState();
 
     private MetadataExtractor metadataExtractor = new MetadataExtractor();
 
@@ -32,8 +33,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
             }
             else {
                 for (SearchType type: this.types) {
-                    if (RequestState.isRequestable()) {
-                        RequestState.requestState();
+                    if (requestState.isRequestable()) {
+                        requestState.requestState();
                         String url = NaverRequest.MAIN_URL + type.getUrl() + "?query=" + word;
                         sendRequest(url, word);
                     }
@@ -48,7 +49,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        RequestState.responseState();
+                        requestState.responseState();
                         setMetadata(word, response);
                         callListenerIfFinished();
                     }
@@ -78,7 +79,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
     }
 
     private void callListenerIfFinished() {
-        if (RequestState.isFinished()) {
+        if (requestState.isFinished()) {
             listener.onResponse(keywords);
         }
     }
@@ -86,22 +87,22 @@ public class MetadataCreatorImpl implements MetadataCreator {
     static class RequestState {
         private final static int MAX_REQUEST_CNT = 10;
 
-        private static AtomicInteger requestCnt = new AtomicInteger(0);
-        private static AtomicInteger responseCnt = new AtomicInteger(0);
+        private AtomicInteger requestCnt = new AtomicInteger(0);
+        private AtomicInteger responseCnt = new AtomicInteger(0);
 
-        static boolean isRequestable() {
+        boolean isRequestable() {
             return requestCnt.get() < MAX_REQUEST_CNT;
         }
 
-        static void requestState() {
+        void requestState() {
             requestCnt.incrementAndGet();
         }
 
-        static void responseState() {
+        void responseState() {
             responseCnt.incrementAndGet();
         }
 
-        static boolean isFinished() {
+        boolean isFinished() {
             return requestCnt.get() == responseCnt.get();
         }
     }
