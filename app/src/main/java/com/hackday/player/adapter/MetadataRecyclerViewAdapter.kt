@@ -9,7 +9,7 @@ class MetadataRecyclerViewAdapter<B : ViewDataBinding, T : Any>(
     @LayoutRes private val layoutResId: Int,
     private val bindingVariableId: Int
 ) : RecyclerView.Adapter<MetadataViewHolder<B, T>>() {
-    private val items = arrayListOf<T>()
+    private val items = mutableListOf<T>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         object : MetadataViewHolder<B, T>(layoutResId, parent, bindingVariableId) {}
@@ -18,7 +18,7 @@ class MetadataRecyclerViewAdapter<B : ViewDataBinding, T : Any>(
 
     fun getItem(position: Int) = items[position]
 
-    fun setItems(data: ArrayList<T>) {
+    fun setItems(data: List<T>) {
         items.clear()
         items.addAll(data)
         notifyDataSetChanged()

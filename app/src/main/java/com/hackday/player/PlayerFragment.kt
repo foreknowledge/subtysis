@@ -52,7 +52,7 @@ class PlayerFragment : Fragment() {
 
     private var player: SimpleExoPlayer? = null
 
-    fun getarray(): ArrayList<Subtitle> {
+    fun getSubtitles(): List<Subtitle> {
         val c = SubtitleParserImpl()
         return c.createSubtitle(subtitleFilePath)
     }
@@ -61,7 +61,7 @@ class PlayerFragment : Fragment() {
 
         override fun handleMessage(msg: Message) {
             val metadata = viewModel.displayData.value
-            val subtitles = getarray()
+            val subtitles = getSubtitles()
 
             if (player != null && subtitles != null) {
                 if (player != null) {
@@ -78,7 +78,7 @@ class PlayerFragment : Fragment() {
                                             val filteredData = metadata?.filter {
                                                 subtitles[index - 1].sentence.contains(it.word)
                                                         && it.metadata != null
-                                            } as ArrayList<Keyword>
+                                            } as List<Keyword>
 
                                             if (filteredData.isNotEmpty()) {
                                                 viewModel.setDisplayData(filteredData)
@@ -143,7 +143,7 @@ class PlayerFragment : Fragment() {
             val subTitleFilePath = arguments.getString("subTitleFilePath")
             this.subtitleFilePath = subTitleFilePath!!
         }
-        getarray()
+        getSubtitles()
         init()
 
         subscribeViewModel()
@@ -169,9 +169,9 @@ class PlayerFragment : Fragment() {
     private fun startSubtitleAnalyze() {
         Subtysis(
             File(this.subtitleFilePath),
-            arrayListOf(SearchType.SHOPPING)
+            listOf(SearchType.SHOPPING)
         ).analyze(object : ResponseListener {
-            override fun onResponse(keywords: ArrayList<Keyword>?) {
+            override fun onResponse(keywords: List<Keyword>?) {
                 keywords?.let {
                     viewModel.setDisplayData(keywords)
                 }

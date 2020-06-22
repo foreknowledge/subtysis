@@ -6,20 +6,20 @@ import com.hackday.subtysis.model.Keyword;
 import com.hackday.subtysis.model.SearchType;
 import com.hackday.subtysis.model.response.ResponseData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MetadataCreatorImpl implements MetadataCreator {
-    private ArrayList<Keyword> keywords;
-    private ArrayList<SearchType> types;
+    private List<Keyword> keywords;
+    private List<SearchType> types;
     private HashMap<String, HashMap<SearchType, ResponseData>> metadataCache = new HashMap<>();
     private ResponseListener listener;
 
     private MetadataExtractor metadataExtractor = new MetadataExtractor();
 
     @Override
-    public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, ResponseListener listener) {
+    public void fillMetadata(List<Keyword> keywords, List<SearchType> types, ResponseListener listener) {
         this.keywords = keywords;
         this.types = types;
         this.listener = listener;

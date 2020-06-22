@@ -50,9 +50,9 @@ class MainActivity : AppCompatActivity() {
     private fun showLog() {
         Subtysis(
             File(""),
-            arrayListOf(SearchType.SHOPPING)
+            listOf(SearchType.SHOPPING)
         ).analyze(object : ResponseListener {
-            override fun onResponse(keywords: ArrayList<Keyword>?) {
+            override fun onResponse(keywords: List<Keyword>?) {
                 keywords?.let {
                     for ((_, word, _, metadata) in keywords) {
                         Log.d("Test", "keyword = $word")

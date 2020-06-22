@@ -19,10 +19,10 @@ import com.hackday.subtysis.model.items.ShoppingItem
 
 @SuppressWarnings("unchecked")
 @BindingAdapter("bind_metadata")
-fun bindMetadata(recyclerView: RecyclerView, keywords: ArrayList<Keyword>?) {
+fun bindMetadata(recyclerView: RecyclerView, keywords: List<Keyword>?) {
     val adapter =
         recyclerView.adapter as MetadataRecyclerViewAdapter<ItemShoppingBinding, ShoppingItem>
-    val displayData = arrayListOf<ShoppingItem>()
+    val displayData = mutableListOf<ShoppingItem>()
 
     keywords?.let {
         for (keyword in keywords) {

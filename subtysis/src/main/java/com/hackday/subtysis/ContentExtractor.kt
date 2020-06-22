@@ -5,11 +5,11 @@ import com.hackday.subtysis.model.Subtitle
 
 interface ContentExtractor {
 
-    fun initData(data: ArrayList<Subtitle>)
+    fun initData(data: List<Subtitle>)
 
-    fun addData(data: ArrayList<Subtitle>)
+    fun addData(data: List<Subtitle>)
 
-    fun getAllKeywords(): ArrayList<Keyword>
+    fun getAllKeywords(): List<Keyword>
 
-    fun getKeywordsByFrequency(min: Int = 1): ArrayList<Keyword>
+    fun getKeywordsByFrequency(min: Int = 1): List<Keyword>
 }
