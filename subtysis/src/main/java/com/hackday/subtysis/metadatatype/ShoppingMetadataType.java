@@ -1,4 +1,4 @@
-package com.hackday.subtysis.metadata;
+package com.hackday.subtysis.metadatatype;
 
 import com.google.gson.reflect.TypeToken;
 import com.hackday.subtysis.model.items.ShoppingItem;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Create by Yeji on 22,June,2020.
  */
-public class ShoppingMetadata extends BaseMetadata {
+class ShoppingMetadataType extends BaseMetadataType {
     @Override
     public Type getListType() {
         return new TypeToken<ArrayList<ShoppingItem>>() {}.getType();

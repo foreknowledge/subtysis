@@ -3,8 +3,8 @@ package com.hackday.subtysis;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.hackday.subtysis.metadata.MetadataTypeFactory;
-import com.hackday.subtysis.metadata.MetadataTypeFactoryImpl;
+import com.hackday.subtysis.metadatatype.MetadataTypeFactory;
+import com.hackday.subtysis.metadatatype.MetadataTypeFactoryImpl;
 import com.hackday.subtysis.model.SearchType;
 import com.hackday.subtysis.model.items.BaseItem;
 import com.hackday.subtysis.model.response.ResponseData;
