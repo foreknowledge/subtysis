@@ -77,7 +77,7 @@ class PlayerFragment : Fragment() {
                                         if (metadata != null) {
                                             val filteredData = metadata?.filter {
                                                 subtitles[index - 1].sentence.contains(it.word)
-                                                        && it.responses != null
+                                                        && it.metadata != null
                                             } as ArrayList<Keyword>
 
                                             if (filteredData.isNotEmpty()) {

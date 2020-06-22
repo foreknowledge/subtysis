@@ -44,7 +44,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
             String word = keyword.getWord();
 
             if (responsesMap.containsKey(word)) {
-                keyword.setResponses(responsesMap.get(word));
+                keyword.setMetadata(responsesMap.get(word));
             }
             else {
                 for (SearchType type: this.types) {
@@ -86,7 +86,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
 
         for (Keyword keyword : keywords) {
             if (keyword.getWord().equals(word)) {
-                keyword.setResponses(responsesMap.get(word));
+                keyword.setMetadata(responsesMap.get(word));
                 break;
             }
         }
