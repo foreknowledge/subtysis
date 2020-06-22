@@ -1,34 +1,22 @@
 package com.hackday.subtysis;
 
-import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hackday.subtysis.model.Keyword;
 import com.hackday.subtysis.model.SearchType;
-import com.hackday.subtysis.model.items.BaseItem;
-import com.hackday.subtysis.model.items.BlogItem;
-import com.hackday.subtysis.model.items.EncyclopediaItem;
-import com.hackday.subtysis.model.items.ShoppingItem;
 import com.hackday.subtysis.model.response.ResponseData;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MetadataCreatorImpl implements MetadataCreator {
-    private final static String TAG = "MetadataCreatorImpl";
-
     private ArrayList<Keyword> keywords;
     private ArrayList<SearchType> types;
-    private HashMap<String, HashMap<SearchType, ResponseData>> metadataMap = new HashMap<>();
+    private HashMap<String, HashMap<SearchType, ResponseData>> metadataCache = new HashMap<>();
     private ResponseListener listener;
 
-    private Gson gson = new Gson();
+    private MetadataExtractor metadataExtractor = new MetadataExtractor();
 
     @Override
     public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, ResponseListener listener) {
@@ -39,8 +27,8 @@ public class MetadataCreatorImpl implements MetadataCreator {
         for (Keyword keyword : this.keywords) {
             String word = keyword.getWord();
 
-            if (metadataMap.containsKey(word)) {
-                keyword.setMetadata(metadataMap.get(word));
+            if (metadataCache.containsKey(word)) {
+                keyword.setMetadata(metadataCache.get(word));
             }
             else {
                 for (SearchType type: this.types) {
@@ -61,7 +49,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
                     @Override
                     public void onResponse(String response) {
                         RequestState.responseState();
-                        fillMetadata(word, response);
+                        setMetadata(word, response);
                         callListenerIfFinished();
                     }
                 },
@@ -77,14 +65,13 @@ public class MetadataCreatorImpl implements MetadataCreator {
         RequestManager.getInstance().add(request);
     }
 
-
-    private void fillMetadata(String word, String response) {
-        HashMap<SearchType, ResponseData> metadata = getMetadata(response);
-        metadataMap.put(word, metadata);
+    private void setMetadata(String word, String response) {
+        HashMap<SearchType, ResponseData> metadata = metadataExtractor.extractMetadata(types, response);
+        metadataCache.put(word, metadata);
 
         for (Keyword keyword : keywords) {
             if (keyword.getWord().equals(word)) {
-                keyword.setMetadata(metadataMap.get(word));
+                keyword.setMetadata(metadataCache.get(word));
                 break;
             }
         }
@@ -94,38 +81,6 @@ public class MetadataCreatorImpl implements MetadataCreator {
         if (RequestState.isFinished()) {
             listener.onResponse(keywords);
         }
-    }
-
-    private HashMap<SearchType, ResponseData> getMetadata(String response) {
-        HashMap<SearchType, ResponseData> results = new HashMap<>();
-
-        for (SearchType type: types) {
-            ResponseData responseData = gson.fromJson(response, ResponseData.class);
-
-            try {
-                Type listType;
-
-                if (type == SearchType.BLOG) listType = new TypeToken<ArrayList<BlogItem>>() {}.getType();
-                else if (type == SearchType.ENCYCLOPEDIA)
-                    listType = new TypeToken<ArrayList<EncyclopediaItem>>() {}.getType();
-                else if (type == SearchType.SHOPPING)
-                    listType = new TypeToken<ArrayList<ShoppingItem>>() {}.getType();
-                else {
-                    Log.e(TAG, "type error!");
-                    return null;
-                }
-
-                ArrayList<BaseItem> baseItems = gson
-                        .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
-                responseData.setItems(baseItems);
-            } catch (JSONException e) {
-                Log.e(TAG, "JSONException error message: " + e.getMessage());
-            }
-
-            results.put(type, responseData);
-        }
-
-        return results;
     }
     
     static class RequestState {
