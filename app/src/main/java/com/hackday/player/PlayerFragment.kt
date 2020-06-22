@@ -4,8 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.Message
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +34,6 @@ import com.hackday.utils.Toaster
 import kotlinx.android.synthetic.main.fragment_player.*
 import java.io.File
 
-
 /**
  * @author Created by lee.cm on 2019-11-12.
  */
@@ -44,7 +43,6 @@ class PlayerFragment : Fragment() {
     private lateinit var subtitleFilePath: String
     private lateinit var sonthread: NewThread
 
-
     private val shoppingAdapter = MetadataRecyclerViewAdapter<ItemShoppingBinding, Keyword>(
         R.layout.item_shopping,
         BR.item
@@ -52,52 +50,50 @@ class PlayerFragment : Fragment() {
 
     private var player: SimpleExoPlayer? = null
 
-    fun getarray(): ArrayList<Subtitle> {
-        val c = SubtitleParserImpl()
-        return c.createSubtitle(subtitleFilePath)
-    }
+    private val mHandler: Handler = Handler { msg ->
+        val metadata = viewModel.displayData.value
+        val subtitles = getSubtitles()
 
-    val mHandler: Handler = object : Handler() {
+        if (player != null) {
+            if (player != null) {
+                if (msg.what == 0) {
+                    for (i in subtitles.indices) {
+                        if (subtitles[i].frame > player!!.currentPosition && i > 0) {
 
-        override fun handleMessage(msg: Message) {
-            val metadata = viewModel.displayData.value
-            val subtitles = getarray()
+                            if (subtitles[i - 1].frame > (player!!.currentPosition - 1000)) {
+                                if (subtitleview != null) {
+                                    subtitleview.text = subtitles[i - 1].sentence
 
-            if (player != null && subtitles != null) {
-                if (player != null) {
-                    if (msg.what == 0) {
-                        for (i in subtitles.indices) {
-                            if (subtitles[i].frame > player!!.currentPosition && i > 0) {
-                                var index: Int = i
+                                    if (metadata != null) {
+                                        val filteredData = metadata.filter {
+                                            subtitles[i - 1].sentence.contains(it.word)
+                                                    && it.metadata != null
+                                        }
 
-                                if (subtitles[index - 1].frame > (player!!.currentPosition - 1000)) {
-                                    if (subtitleview != null) {
-                                        subtitleview.text = subtitles[index - 1].sentence
-
-                                        if (metadata != null) {
-                                            val filteredData = metadata?.filter {
-                                                subtitles[index - 1].sentence.contains(it.word)
-                                                        && it.metadata != null
-                                            } as ArrayList<Keyword>
-
-                                            if (filteredData.isNotEmpty()) {
-                                                viewModel.setDisplayData(filteredData)
-                                                viewModel.setSheetVisibility(true)
-                                            } else {
-                                                viewModel.setSheetVisibility(false)
-                                            }
+                                        if (filteredData.isNotEmpty()) {
+                                            viewModel.setDisplayData(filteredData)
+                                            viewModel.setSheetVisibility(true)
+                                        } else {
+                                            viewModel.setSheetVisibility(false)
                                         }
                                     }
-                                } else {
-                                    subtitleview.text = ""
                                 }
-                                break
+                            } else {
+                                subtitleview.text = ""
                             }
+                            break
                         }
                     }
                 }
             }
         }
+
+        true
+    }
+
+    private fun getSubtitles(): List<Subtitle> {
+        val c = SubtitleParserImpl()
+        return c.createSubtitle(subtitleFilePath)
     }
 
     companion object {
@@ -143,7 +139,7 @@ class PlayerFragment : Fragment() {
             val subTitleFilePath = arguments.getString("subTitleFilePath")
             this.subtitleFilePath = subTitleFilePath!!
         }
-        getarray()
+        getSubtitles()
         init()
 
         subscribeViewModel()
@@ -159,7 +155,7 @@ class PlayerFragment : Fragment() {
             } else {
                 infotext.visibility = View.VISIBLE
             }
-            check.setText(R.id.showlist.toString())
+            check.text = R.id.showlist.toString()
         }
         selectMediaUri()
         startSubtitleAnalyze()
@@ -169,11 +165,12 @@ class PlayerFragment : Fragment() {
     private fun startSubtitleAnalyze() {
         Subtysis(
             File(this.subtitleFilePath),
-            arrayListOf(SearchType.SHOPPING)
+            listOf(SearchType.SHOPPING)
         ).analyze(object : ResponseListener {
-            override fun onResponse(keywords: ArrayList<Keyword>?) {
+            override fun onResponse(keywords: List<Keyword>?) {
                 keywords?.let {
                     viewModel.setDisplayData(keywords)
+                    Log.d("Test", "keywords = $keywords")
                 }
             }
 
@@ -185,7 +182,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun subscribeViewModel() {
-        viewModel.getVideoSourceUriLiveData().observe(this, Observer {
+        viewModel.getVideoSourceUriLiveData().observe(viewLifecycleOwner, Observer {
             if (it == null) {
                 Toaster.showShort("cannot start player with null uri")
             } else {
@@ -237,7 +234,7 @@ class PlayerFragment : Fragment() {
     }
 }
 
-class NewThread(var data: Handler) : Thread() {
+class NewThread(private val data: Handler) : Thread() {
 
     override fun run() {
 

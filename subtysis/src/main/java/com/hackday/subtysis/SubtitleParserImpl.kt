@@ -7,11 +7,11 @@ import java.io.File
 
 open class SubtitleParserImpl : SubtitleParser {
 
-    override fun createSubtitle(filename: String): ArrayList<Subtitle> {
+    override fun createSubtitle(filename: String): List<Subtitle> {
         val bufferReader = File(filename)
         val lineList = mutableListOf<String>()
-        val arrayList = ArrayList<Subtitle>()
-        var count: Int = 0
+        val list = mutableListOf<Subtitle>()
+        var count = 0
         var m = -1
         bufferReader.useLines { lines -> lines.forEach { lineList.add(it) } }
         lineList.forEach {
@@ -22,7 +22,7 @@ open class SubtitleParserImpl : SubtitleParser {
                 {
                     val temp = Subtitle()
                     m = m + 1
-                    arrayList.add(temp)
+                    list.add(temp)
                     while (s.contains(":"))
                         s = s.replace(":", "")
 
@@ -35,7 +35,7 @@ open class SubtitleParserImpl : SubtitleParser {
                         Integer.valueOf(hour) * 3600 + Integer.valueOf(minute) * 60 + Integer.valueOf(
                             second
                         )
-                    arrayList[m].frame = time
+                    list[m].frame = time
                 }
                 if (s != "") {
                     if (s[0] !in '0'..'9') {
@@ -59,15 +59,15 @@ open class SubtitleParserImpl : SubtitleParser {
 
                         if (s.matches(".[ㄱ-ㅎ ㅏ-ㅣ 가-힣]+.*".toRegex())) {
                             if (m >= 0)
-                                arrayList[m].langCode = LangCode.KO
+                                list[m].langCode = LangCode.KO
                         } else {
                             if (m >= 0)
-                                arrayList[m].langCode = LangCode.EN
+                                list[m].langCode = LangCode.EN
                         }
                         //자막내용을 추가하는 단계
                         if (s !== "") {
                             if (m >= 0) {
-                                arrayList[m].sentence = arrayList[m].sentence + s
+                                list[m].sentence = list[m].sentence + s
                             }
                         }
                     }
@@ -107,7 +107,7 @@ open class SubtitleParserImpl : SubtitleParser {
                     {
                         val temp = Subtitle()
                         m = m + 1
-                        arrayList.add(temp)
+                        list.add(temp)
                         var st = 0
                         var endp = 0
                         //프레임번호를 찾는 과정입니다.
@@ -122,7 +122,7 @@ open class SubtitleParserImpl : SubtitleParser {
                         val cr = s.substring(st, endp)
                         if (cr.isNotBlank()) {
                             val time = Integer.valueOf(cr)
-                            arrayList[m].frame = time
+                            list[m].frame = time
                         }
                         val er = s.substring(s.indexOf("<"), s.indexOf(">") + 1)
                         s = s.replace(er, "")
@@ -131,9 +131,9 @@ open class SubtitleParserImpl : SubtitleParser {
                     //P class 태그에서 자막의 type를 가져오는 작업입니다.
                     {
                         if (s.contains("KRCC")) {
-                            arrayList[m].langCode = LangCode.KO
+                            list[m].langCode = LangCode.KO
                         } else {
-                            arrayList[m].langCode = LangCode.EN
+                            list[m].langCode = LangCode.EN
                         }
                         val er = s.substring(s.indexOf("<"), s.indexOf(">") + 1)
                         s = s.replace(er, "")
@@ -141,13 +141,13 @@ open class SubtitleParserImpl : SubtitleParser {
 
                     if (s !== "") {
                         if (m >= 0) {
-                            arrayList[m].sentence = arrayList[m].sentence + s
+                            list[m].sentence = list[m].sentence + s
                         }
                     }
                 }
             }
         }
-        return (arrayList)
+        return list
     }
 }
 

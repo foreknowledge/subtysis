@@ -5,19 +5,19 @@ import com.hackday.subtysis.model.Subtitle
 
 class ContentExtractorImpl : ContentExtractor {
     private val analyzer = MorphemeAnalyzer()
-    private val subtitles = arrayListOf<Subtitle>()
+    private val subtitles = mutableListOf<Subtitle>()
 
-    override fun initData(data: ArrayList<Subtitle>) {
+    override fun initData(data: List<Subtitle>) {
         subtitles.clear()
         subtitles.addAll(data)
     }
 
-    override fun addData(data: ArrayList<Subtitle>) {
+    override fun addData(data: List<Subtitle>) {
         subtitles.addAll(data)
     }
 
-    override fun getAllKeywords(): ArrayList<Keyword> {
-        val result = arrayListOf<Keyword>()
+    override fun getAllKeywords(): List<Keyword> {
+        val result = mutableListOf<Keyword>()
 
         for (subtitle in subtitles) {
             val keywords = analyzer.analyzeSubtitle(subtitle)
@@ -27,7 +27,7 @@ class ContentExtractorImpl : ContentExtractor {
         return result
     }
 
-    override fun getKeywordsByFrequency(min: Int): ArrayList<Keyword> {
+    override fun getKeywordsByFrequency(min: Int): List<Keyword> {
         TODO("not implemented")
     }
 }

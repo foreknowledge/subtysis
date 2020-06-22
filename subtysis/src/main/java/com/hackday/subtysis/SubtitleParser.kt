@@ -4,6 +4,6 @@ import com.hackday.subtysis.model.Subtitle
 
 
 interface SubtitleParser{
-    fun createSubtitle(filename: String):ArrayList<Subtitle>
+    fun createSubtitle(filename: String): List<Subtitle>
 
 }

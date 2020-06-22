@@ -13,13 +13,13 @@ class PlayerViewModel : ViewModel() {
 
     private val videoSourceUri = MutableLiveData<Uri>()
 
-    private val _displayData = MutableLiveData<ArrayList<Keyword>>()
+    private val _displayData = MutableLiveData<List<Keyword>>()
 
     private val _sheetVisibility = MutableLiveData<Boolean>(false)
 
     fun getVideoSourceUriLiveData() = videoSourceUri
 
-    val displayData: LiveData<ArrayList<Keyword>>
+    val displayData: LiveData<List<Keyword>>
         get() = _displayData
 
     val sheetVisibility: LiveData<Boolean>
@@ -33,7 +33,7 @@ class PlayerViewModel : ViewModel() {
         return this.videoSourceUri.value != null
     }
 
-    fun setDisplayData(keywords: ArrayList<Keyword>) {
+    fun setDisplayData(keywords: List<Keyword>) {
         _displayData.value = keywords
         setSheetVisibility(true)
     }

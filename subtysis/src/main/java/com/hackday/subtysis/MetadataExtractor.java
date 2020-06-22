@@ -13,8 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Create by Yeji on 22,June,2020.
@@ -24,7 +24,7 @@ public class MetadataExtractor {
     private MetadataTypeGetter metadataTypeGetter = new MetadataTypeGetterImpl();
     private Gson gson = new Gson();
 
-    public HashMap<SearchType, ResponseData> extractMetadata(ArrayList<SearchType> types, String response) {
+    public HashMap<SearchType, ResponseData> extractMetadata(List<SearchType> types, String response) {
         HashMap<SearchType, ResponseData> results = new HashMap<>();
 
         for (SearchType type: types) {
@@ -42,7 +42,7 @@ public class MetadataExtractor {
         try {
             Type listType = metadataTypeGetter.getInstance(type).getListType();
 
-            ArrayList<BaseItem> baseItems = gson
+            List<BaseItem> baseItems = gson
                     .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
             responseData.setItems(baseItems);
         } catch (JSONException e) {

@@ -11,9 +11,9 @@ class MorphemeAnalyzer(
 ) {
     private val komoran = Komoran(DEFAULT_MODEL.LIGHT)
 
-    fun analyzeSubtitle(subtitle: Subtitle): ArrayList<Keyword> {
+    fun analyzeSubtitle(subtitle: Subtitle): List<Keyword> {
         val tokenList = analyzeSentence(subtitle.sentence).iterator()
-        val result = arrayListOf<Keyword>()
+        val result = mutableListOf<Keyword>()
 
         while (tokenList.hasNext()) {
             val token = tokenList.next()

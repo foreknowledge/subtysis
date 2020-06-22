@@ -3,8 +3,8 @@ package com.hackday.subtysis;
 import com.hackday.subtysis.model.Keyword;
 import com.hackday.subtysis.model.SearchType;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface MetadataCreator {
-    void fillMetadata(ArrayList<Keyword> keywordKts, ArrayList<SearchType> types, ResponseListener listener);
+    void fillMetadata(List<Keyword> keywordKts, List<SearchType> types, ResponseListener listener);
 }
