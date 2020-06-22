@@ -62,7 +62,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
         );
 
         request.setShouldCache(false);
-        RequestManager.getInstance().add(request);
+        RequestQueueProvider.getInstance().add(request);
     }
 
     private void setMetadata(String word, String response) {
