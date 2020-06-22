@@ -11,6 +11,7 @@ import java.util.List;
  */
 class EncyclopediaMetadataType extends BaseMetadataType {
     private static EncyclopediaMetadataType encyclopediaMetadataType;
+    private Type listType = new TypeToken<List<EncyclopediaItem>>() {}.getType();
 
     private EncyclopediaMetadataType() {}
 
@@ -24,6 +25,6 @@ class EncyclopediaMetadataType extends BaseMetadataType {
 
     @Override
     public Type getListType() {
-        return new TypeToken<List<EncyclopediaItem>>() {}.getType();
+        return listType;
     }
 }

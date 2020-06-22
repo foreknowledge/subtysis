@@ -11,6 +11,7 @@ import java.util.List;
  */
 class BlogMetadataType extends BaseMetadataType {
     private static BlogMetadataType blogMetadataType;
+    private Type listType = new TypeToken<List<BlogItem>>() {}.getType();
 
     private BlogMetadataType() {}
 
@@ -24,6 +25,6 @@ class BlogMetadataType extends BaseMetadataType {
 
     @Override
     public Type getListType() {
-        return new TypeToken<List<BlogItem>>() {}.getType();
+        return listType;
     }
 }
