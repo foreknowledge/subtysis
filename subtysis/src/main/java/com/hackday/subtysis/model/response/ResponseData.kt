@@ -19,5 +19,5 @@ data class ResponseData(
     @SerializedName("display")
     val display: Int,
     @SerializedName("items")
-    var items: List<out BaseItem>
+    var items: List<BaseItem>
 )
