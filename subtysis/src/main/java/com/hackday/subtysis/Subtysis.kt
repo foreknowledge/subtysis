@@ -4,9 +4,7 @@ import android.os.AsyncTask
 import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.LangCode
 import com.hackday.subtysis.model.SearchType
-import com.hackday.subtysis.model.Subtitle
 import java.io.File
-import java.util.*
 import java.util.concurrent.Executor
 import kotlin.collections.ArrayList
 
@@ -17,7 +15,7 @@ class Subtysis(private val file: File, private val types: ArrayList<SearchType>)
 
     private val serialExecutor: Executor = AsyncTask.SERIAL_EXECUTOR
 
-    fun analyze(listener: SetResponseListener) {
+    fun analyze(listener: ResponseListener) {
         serialExecutor.execute {
 //            val subtitleParser: SubtitleParser = SubtitleParserImpl()
 //            val subtitles: ArrayList<Subtitle> = subtitleParser.createSubtitle(file.path)

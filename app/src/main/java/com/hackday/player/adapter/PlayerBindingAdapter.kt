@@ -26,8 +26,8 @@ fun bindMetadata(recyclerView: RecyclerView, keywords: ArrayList<Keyword>?) {
 
     keywords?.let {
         for (keyword in keywords) {
-            if (keyword.responses != null) {
-                val shoppingData = keyword.responses!![SearchType.SHOPPING]?.items
+            if (keyword.metadata != null) {
+                val shoppingData = keyword.metadata!![SearchType.SHOPPING]?.items
 
                 shoppingData?.let {
                     for (data in shoppingData) displayData.add(data as ShoppingItem)

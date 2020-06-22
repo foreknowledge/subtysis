@@ -6,9 +6,9 @@ data class ShoppingItem (
     @SerializedName("image")
     val image: String,
     @SerializedName("lprice")
-    val lprice: Int,
+    val lowPrice: Int,
     @SerializedName("hprice")
-    val hprice: Int,
+    val highPrice: Int,
     @SerializedName("mallName")
     val mallName: String,
     @SerializedName("productId")

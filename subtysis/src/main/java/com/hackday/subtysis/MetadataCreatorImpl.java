@@ -1,41 +1,25 @@
 package com.hackday.subtysis;
 
-import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hackday.subtysis.model.Keyword;
 import com.hackday.subtysis.model.SearchType;
-import com.hackday.subtysis.model.items.BaseItem;
-import com.hackday.subtysis.model.items.BlogItem;
-import com.hackday.subtysis.model.items.EncyclopediaItem;
-import com.hackday.subtysis.model.items.ShoppingItem;
 import com.hackday.subtysis.model.response.ResponseData;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MetadataCreatorImpl implements MetadataCreator {
-    private final String TAG = "MetadataCreatorImpl";
-    private final int MAX_REQUEST_CNT = 10;
-
     private ArrayList<Keyword> keywords;
     private ArrayList<SearchType> types;
-    private HashMap<String, HashMap<SearchType, ResponseData>> responsesMap = new HashMap<>();
-    private SetResponseListener listener;
+    private HashMap<String, HashMap<SearchType, ResponseData>> metadataCache = new HashMap<>();
+    private ResponseListener listener;
 
-    private Gson gson = new Gson();
-
-  private static AtomicInteger requestCnt = new AtomicInteger(0);
-  private static AtomicInteger responseCnt = new AtomicInteger(0);
+    private MetadataExtractor metadataExtractor = new MetadataExtractor();
 
     @Override
-    public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, SetResponseListener listener) {
+    public void fillMetadata(ArrayList<Keyword> keywords, ArrayList<SearchType> types, ResponseListener listener) {
         this.keywords = keywords;
         this.types = types;
         this.listener = listener;
@@ -43,13 +27,13 @@ public class MetadataCreatorImpl implements MetadataCreator {
         for (Keyword keyword : this.keywords) {
             String word = keyword.getWord();
 
-            if (responsesMap.containsKey(word)) {
-                keyword.setResponses(responsesMap.get(word));
+            if (metadataCache.containsKey(word)) {
+                keyword.setMetadata(metadataCache.get(word));
             }
             else {
                 for (SearchType type: this.types) {
-                  if (requestCnt.get() < MAX_REQUEST_CNT) {
-                    requestCnt.incrementAndGet();
+                    if (RequestState.isRequestable()) {
+                        RequestState.requestState();
                         String url = NaverRequest.MAIN_URL + type.getUrl() + "?query=" + word;
                         sendRequest(url, word);
                     }
@@ -64,7 +48,9 @@ public class MetadataCreatorImpl implements MetadataCreator {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        processResponse(word, response);
+                        RequestState.responseState();
+                        setMetadata(word, response);
+                        callListenerIfFinished();
                     }
                 },
                 new Response.ErrorListener() {
@@ -79,54 +65,44 @@ public class MetadataCreatorImpl implements MetadataCreator {
         RequestManager.getInstance().add(request);
     }
 
-
-    private void processResponse(String word, String response) {
-        HashMap<SearchType, ResponseData> responses = getResponses(response);
-        responsesMap.put(word, responses);
+    private void setMetadata(String word, String response) {
+        HashMap<SearchType, ResponseData> metadata = metadataExtractor.extractMetadata(types, response);
+        metadataCache.put(word, metadata);
 
         for (Keyword keyword : keywords) {
             if (keyword.getWord().equals(word)) {
-                keyword.setResponses(responsesMap.get(word));
+                keyword.setMetadata(metadataCache.get(word));
                 break;
             }
         }
+    }
 
-      responseCnt.incrementAndGet();
-
-      if (requestCnt.get() == responseCnt.get()) {
+    private void callListenerIfFinished() {
+        if (RequestState.isFinished()) {
             listener.onResponse(keywords);
         }
     }
+    
+    static class RequestState {
+        private final static int MAX_REQUEST_CNT = 10;
 
-    private HashMap<SearchType, ResponseData> getResponses(String response) {
-        HashMap<SearchType, ResponseData> results = new HashMap<>();
+        private static AtomicInteger requestCnt = new AtomicInteger(0);
+        private static AtomicInteger responseCnt = new AtomicInteger(0);
 
-        for (SearchType type: types) {
-            ResponseData responseData = gson.fromJson(response, ResponseData.class);
-
-            try {
-                Type listType;
-
-                if (type == SearchType.BLOG) listType = new TypeToken<ArrayList<BlogItem>>() {}.getType();
-                else if (type == SearchType.ENCYCLOPEDIA)
-                    listType = new TypeToken<ArrayList<EncyclopediaItem>>() {}.getType();
-                else if (type == SearchType.SHOPPING)
-                    listType = new TypeToken<ArrayList<ShoppingItem>>() {}.getType();
-                else {
-                    Log.e(TAG, "type error!");
-                    return null;
-                }
-
-                ArrayList<BaseItem> baseItems = gson
-                    .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);
-                responseData.setItems(baseItems);
-            } catch (JSONException e) {
-                Log.e(TAG, "JSONException error message: " + e.getMessage());
-            }
-
-            results.put(type, responseData);
+        static boolean isRequestable() {
+            return requestCnt.get() < MAX_REQUEST_CNT;
         }
 
-        return results;
+        static void requestState() {
+            requestCnt.incrementAndGet();
+        }
+
+        static void responseState() {
+            responseCnt.incrementAndGet();
+        }
+
+        static boolean isFinished() {
+            return requestCnt.get() == responseCnt.get();
+        }
     }
 }

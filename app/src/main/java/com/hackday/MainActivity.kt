@@ -13,7 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.hackday.databinding.ActivityMainBinding
 import com.hackday.player.PlayerFragment
-import com.hackday.subtysis.SetResponseListener
+import com.hackday.subtysis.ResponseListener
 import com.hackday.subtysis.Subtysis
 import com.hackday.subtysis.model.Keyword
 import com.hackday.subtysis.model.SearchType
@@ -51,16 +51,16 @@ class MainActivity : AppCompatActivity() {
         Subtysis(
             File(""),
             arrayListOf(SearchType.SHOPPING)
-        ).analyze(object : SetResponseListener {
+        ).analyze(object : ResponseListener {
             override fun onResponse(keywords: ArrayList<Keyword>?) {
                 keywords?.let {
-                    for ((_, word, _, responses) in keywords) {
-                        Log.d("Log", "keyword = $word")
-                        val data = responses!![SearchType.SHOPPING]
-                        for (baseItem in data!!.items) {
+                    for ((_, word, _, metadata) in keywords) {
+                        Log.d("Test", "keyword = $word")
+                        val data = metadata?.get(SearchType.SHOPPING)
+                        for (baseItem in data?.items!!) {
                             val item = baseItem as ShoppingItem
                             Log.d(
-                                "Log",
+                                "Test",
                                 "title = [" + item.title + "], mallName = [" + item.mallName + "]"
                             )
                         }
