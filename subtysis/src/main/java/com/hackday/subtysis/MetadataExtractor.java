@@ -3,8 +3,8 @@ package com.hackday.subtysis;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.hackday.subtysis.metadatatype.MetadataTypeFactory;
-import com.hackday.subtysis.metadatatype.MetadataTypeFactoryImpl;
+import com.hackday.subtysis.metadatatype.MetadataTypeGetter;
+import com.hackday.subtysis.metadatatype.MetadataTypeGetterImpl;
 import com.hackday.subtysis.model.SearchType;
 import com.hackday.subtysis.model.items.BaseItem;
 import com.hackday.subtysis.model.response.ResponseData;
@@ -21,7 +21,7 @@ import java.util.HashMap;
  */
 public class MetadataExtractor {
     private final static String TAG = "MetadataExtractor";
-    private MetadataTypeFactory metadataTypeFactory = new MetadataTypeFactoryImpl();
+    private MetadataTypeGetter metadataTypeGetter = new MetadataTypeGetterImpl();
     private Gson gson = new Gson();
 
     public HashMap<SearchType, ResponseData> extractMetadata(ArrayList<SearchType> types, String response) {
@@ -40,7 +40,7 @@ public class MetadataExtractor {
 
     private void extractAndPut(ResponseData responseData, String response, SearchType type) {
         try {
-            Type listType = metadataTypeFactory.createInstance(type).getListType();
+            Type listType = metadataTypeGetter.getInstance(type).getListType();
 
             ArrayList<BaseItem> baseItems = gson
                     .fromJson(new JSONObject(response).getJSONArray("items").toString(), listType);

@@ -10,6 +10,18 @@ import java.util.ArrayList;
  * Create by Yeji on 22,June,2020.
  */
 class EncyclopediaMetadataType extends BaseMetadataType {
+    private static EncyclopediaMetadataType encyclopediaMetadataType;
+
+    private EncyclopediaMetadataType() {}
+
+    public static BaseMetadataType getInstance() {
+        if (encyclopediaMetadataType == null) {
+            encyclopediaMetadataType = new EncyclopediaMetadataType();
+        }
+
+        return encyclopediaMetadataType;
+    }
+
     @Override
     public Type getListType() {
         return new TypeToken<ArrayList<EncyclopediaItem>>() {}.getType();

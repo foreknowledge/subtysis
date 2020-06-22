@@ -10,6 +10,18 @@ import java.util.ArrayList;
  * Create by Yeji on 22,June,2020.
  */
 class BlogMetadataType extends BaseMetadataType {
+    private static BlogMetadataType blogMetadataType;
+
+    private BlogMetadataType() {}
+
+    public static BaseMetadataType getInstance() {
+        if (blogMetadataType == null) {
+            blogMetadataType = new BlogMetadataType();
+        }
+
+        return blogMetadataType;
+    }
+
     @Override
     public Type getListType() {
         return new TypeToken<ArrayList<BlogItem>>() {}.getType();
