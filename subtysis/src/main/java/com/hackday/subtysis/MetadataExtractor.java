@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Create by Yeji on 22,June,2020.
@@ -28,8 +29,8 @@ public class MetadataExtractor {
     private ResponseData responseData;
     private SearchType searchType;
 
-    public HashMap<SearchType, ResponseData> extractMetadata(List<SearchType> types, String response) {
-        HashMap<SearchType, ResponseData> results = new HashMap<>();
+    public Map<SearchType, ResponseData> extractMetadata(List<SearchType> types, String response) {
+        Map<SearchType, ResponseData> results = new HashMap<>();
 
         for (SearchType type : types) {
             responseData = gson.fromJson(response, ResponseData.class);

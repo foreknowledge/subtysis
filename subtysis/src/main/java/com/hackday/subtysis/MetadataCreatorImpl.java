@@ -8,12 +8,13 @@ import com.hackday.subtysis.model.response.ResponseData;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MetadataCreatorImpl implements MetadataCreator {
     private List<Keyword> keywords;
     private List<SearchType> types;
-    private HashMap<String, HashMap<SearchType, ResponseData>> metadataCache = new HashMap<>();
+    private Map<String, Map<SearchType, ResponseData>> metadataCache = new HashMap<>();
     private ResponseListener listener;
     private RequestState requestState = new RequestState();
 
@@ -67,7 +68,7 @@ public class MetadataCreatorImpl implements MetadataCreator {
     }
 
     private void setMetadata(String word, String response) {
-        HashMap<SearchType, ResponseData> metadata = metadataExtractor.extractMetadata(types, response);
+        Map<SearchType, ResponseData> metadata = metadataExtractor.extractMetadata(types, response);
         metadataCache.put(word, metadata);
 
         for (Keyword keyword : keywords) {
