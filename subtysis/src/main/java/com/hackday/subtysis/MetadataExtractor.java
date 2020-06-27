@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.hackday.subtysis.metadatatype.MetadataTypeGetter;
-import com.hackday.subtysis.metadatatype.MetadataTypeGetterImpl;
 import com.hackday.subtysis.model.SearchType;
 import com.hackday.subtysis.model.items.BaseItem;
 import com.hackday.subtysis.model.response.ResponseData;
@@ -23,11 +22,16 @@ import java.util.Map;
 public class MetadataExtractor {
     private final static String TAG = "MetadataExtractor";
 
-    private MetadataTypeGetter metadataTypeGetter = new MetadataTypeGetterImpl();
-    private Gson gson = new Gson();
+    private MetadataTypeGetter metadataTypeGetter;
+    private Gson gson;
 
     private ResponseData responseData;
     private SearchType searchType;
+
+    public MetadataExtractor(MetadataTypeGetter metadataTypeGetter) {
+        this.metadataTypeGetter = metadataTypeGetter;
+        gson = new Gson();
+    }
 
     public Map<SearchType, ResponseData> extractMetadata(List<SearchType> types, String response) {
         Map<SearchType, ResponseData> results = new HashMap<>();
